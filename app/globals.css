@@ -9,7 +9,7 @@ button { border: 0; cursor: pointer; }
 a { text-decoration: none; }
 
 .desktop { --type: #151517; --muted: #777980; --line: rgba(21, 21, 23, .12); --surface: rgba(255, 255, 255, .72); --ground: #f1f1ef; --ground-deep: #e7e7e4; position: relative; min-height: 100svh; overflow: hidden; color: var(--type); background: radial-gradient(circle at 50% 35%, var(--ground) 0, var(--ground-deep) 100%); transition: background .55s ease, color .55s ease; }
-.theme-ink { color-scheme: dark; --type: #f2f1ec; --muted: #c0bfb8; --line: rgba(242, 241, 236, .2); --surface: rgba(38, 39, 42, .9); --ground: #242527; --ground-deep: #121315; --mark-filter: none; }
+.theme-ink { color-scheme: dark; --type: #f2f1ec; --muted: #c0bfb8; --line: rgba(242, 241, 236, .2); --surface: rgba(38, 39, 42, .9); --ground: #242527; --ground-deep: #121315; }
 .theme-sand { --type: #31271e; --muted: #89786b; --line: rgba(49, 39, 30, .15); --surface: rgba(255, 249, 239, .75); --ground: #eee3d2; --ground-deep: #ded0bd; }
 .glass-card { background: var(--surface); border: 1px solid color-mix(in srgb, var(--type) 8%, transparent); box-shadow: var(--shadow); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); }
 .menu-bar { position: fixed; z-index: 80; top: 0; left: 0; right: 0; height: 35px; padding: 0 18px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--surface) 80%, transparent); backdrop-filter: blur(16px); color: var(--muted); font: 10px 'DM Mono', monospace; }
@@ -73,8 +73,8 @@ a { text-decoration: none; }
 .tool-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 11px; }
 .tool-item { display: grid; min-width: 48px; justify-items: center; gap: 4px; color: var(--muted); }
 .tool-item small { font-size: 8px; white-space: nowrap; }
-.tool-mark { display: grid; width: 27px; height: 27px; place-items: center; border: 1px solid var(--line); border-radius: 8px; background: color-mix(in srgb, var(--surface) 70%, transparent); }
-.tool-mark img { width: 17px; height: 17px; object-fit: contain; filter: var(--mark-filter, none); }
+.tool-mark { display: grid; width: 27px; height: 27px; place-items: center; border: 1px solid rgba(21, 21, 23, .12); border-radius: 8px; background: #fff; }
+.tool-mark img { width: 17px; height: 17px; object-fit: contain; filter: none; }
 
 .desktop-folders { position: absolute; z-index: 3; top: 57px; right: 5.5%; display: grid; grid-template-columns: repeat(2, 72px); gap: 13px 19px; }
 .desktop-folder { display: grid; justify-items: center; gap: 5px; min-height: 64px; padding: 4px; background: transparent; color: var(--type); }
@@ -161,7 +161,6 @@ input, textarea, [contenteditable="true"] { cursor: text !important; }
 .theme-ink .menu-bar, .theme-ink .dock, .theme-ink .mobile-dock { border-color: var(--line); background: var(--surface); -webkit-backdrop-filter: blur(24px); backdrop-filter: blur(24px); }
 .theme-ink .window-bar { background: rgba(255, 255, 255, .025); }
 .theme-ink .dock-item::after { background: #252629; }
-.theme-ink .tool-mark { background: #f4f3ef; border-color: rgba(255, 255, 255, .22); }
 .theme-ink .phone-close { background: #252629; border-color: var(--line); color: var(--type); }
 .desktop:has(.phone-layer) .desktop-dock, .desktop:has(.phone-layer) .menu-bar { visibility: hidden; }
 :where(button, a):focus-visible { outline: 2px solid var(--type); outline-offset: 4px; }

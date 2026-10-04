@@ -28,7 +28,7 @@ The interface keeps a glass-card desktop metaphor with draggable widgets and win
 
 Neutral, ink, and sand share theme-aware surface, border, and text tokens. Ink windows use a solid reading surface with translucent chrome to prevent background text from showing through. The dock, Phone content, and mobile navigation follow the active theme. Reduced motion disables background drift and the custom cursor.
 
-Desktop folders open Work, GitHub, Writing, and About. Multiple windows may remain open; the last selected window is in front. The terminal only animates `whoami` and `cat now.txt`; it does not execute commands. The tool shelf is separate from the dock and uses the eleven requested brand marks.
+Desktop folders open Work, GitHub, Writing, and About. Multiple windows may remain open; the last selected window is in front. The terminal only animates `whoami` and `cat now.txt`; it does not execute commands. The tool shelf is separate from the dock and uses the eleven requested brand marks, each in its original colors on a consistent white tile across all themes.
 
 Education and talks are in About only. Personal telephone numbers must not be stored, displayed, or published. The Phone preview and small-screen portfolio have their own scrollable content; the outer page remains locked.
 
