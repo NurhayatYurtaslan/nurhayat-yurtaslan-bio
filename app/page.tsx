@@ -107,7 +107,7 @@ function StoryWidget({ label, posts, source }: { label: string; posts: string[][
 }
 
 function ToolShelf() {
-  return <section className="tool-shelf glass-card" aria-label="Tools"><span className="widget-label">TOOLS</span><div className="tool-grid">{tools.map(([name, slug]) => <div className="tool-item" key={name}><span className="tool-mark"><img src={`https://cdn.simpleicons.org/${slug}`} alt={`${name} official mark`} /></span><small>{name}</small></div>)}</div></section>;
+  return <section className="tool-shelf" aria-label="Tools"><span className="widget-label">TOOLS</span><div className="tool-grid">{tools.map(([name, slug]) => <div className="tool-item" key={name}><span className="tool-mark"><img src={`https://cdn.simpleicons.org/${slug}`} alt={`${name} official mark`} /></span><small>{name}</small></div>)}</div></section>;
 }
 
 function DesktopFolders({ openWindow }: { openWindow: (id: WindowId) => void }) {
@@ -206,14 +206,13 @@ function HomeWidgetGrid({ widgets, onDraggingChange }: {
   };
 
   return <div className="home-widgets" ref={boardRef} aria-label="Draggable home widgets">
-    {order.map((id) => <div key={id} data-widget-id={id} className={`home-widget-slot ${draggingId === id ? "is-dragging" : ""}`} onPointerDown={(event) => beginDrag(event, id)}>
-      <div className="widget-reorder-handle" role="button" tabIndex={0} aria-label={`Move ${id} widget. Use arrow keys to reorder.`} onKeyDown={(event) => {
+    {order.map((id) => <div key={id} data-widget-id={id} className={`home-widget-slot ${draggingId === id ? "is-dragging" : ""}`} role="group" tabIndex={0} aria-label={`${id} widget. Drag to reorder, or use arrow keys.`} onPointerDown={(event) => beginDrag(event, id)} onKeyDown={(event) => {
         if (event.target !== event.currentTarget) return;
         if (["ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown"].includes(event.key)) {
           event.preventDefault();
           moveWithKeyboard(id, ["ArrowLeft", "ArrowUp"].includes(event.key) ? -1 : 1);
         }
-      }}><span aria-hidden="true">⠿</span></div>
+      }}>
       {widgets.find((widget) => widget.id === id)?.content}
     </div>)}
   </div>;
