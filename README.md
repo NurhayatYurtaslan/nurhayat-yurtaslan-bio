@@ -36,7 +36,7 @@ On the desktop home screen, `HomeWidgetGrid` places the Now, GitHub, LinkedIn, a
 
 The GitHub window presents repository and Academy links as a compact, two-column card grid, using only the configured names and destinations (no unverified repository metrics).
 
-The desktop home also includes live GitHub and Cursor usage cards. GitHub reads public profile and event data from the GitHub API. Cursor usage is opt-in: configure `CURSOR_ADMIN_API_KEY` and `CURSOR_USAGE_EMAIL` as server-side environment variables (never `NEXT_PUBLIC_*`) to show the account's aggregated recent usage. Without those variables, the widget stays in an honest connection-needed state. The Cursor admin key must have access to the relevant team usage data. The official tool shelf is a vertical list, separate from the home widgets.
+The desktop home shows one live GitHub activity card, populated from the public GitHub profile and event APIs. No Cursor usage data is requested or shown. The official tool shelf remains a separate vertical list.
 
 ## License
 

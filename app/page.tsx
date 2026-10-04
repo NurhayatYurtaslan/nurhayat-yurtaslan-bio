@@ -5,7 +5,7 @@ import { ArrowUpRight, BookOpen, BriefcaseBusiness, Building2, Folder, Github, G
 import mediumPosts from "../data/medium.json";
 
 type WindowId = "work" | "github" | "writing" | "about" | "terminal" | "phone";
-type HomeWidgetId = "now" | "github" | "linkedin" | "medium" | "usage";
+type HomeWidgetId = "now" | "github" | "linkedin" | "medium";
 type Theme = "neutral" | "ink" | "sand";
 type Offset = { x: number; y: number };
 
@@ -99,45 +99,24 @@ function RoleWidget() {
   return <article className="home-widget glass-card role-widget"><span className="widget-label">NOW</span>{roles.map((role) => <div className="role-line" key={role.company}><strong>{role.company}</strong><span>{role.role}, {role.dates}.</span></div>)}</article>;
 }
 
-function GitHubWidget() {
-  return <article className="home-widget glass-card github-widget"><div className="widget-heading"><span className="widget-label">GITHUB</span><a href={identity.github} target="_blank" rel="noreferrer" aria-label="Open GitHub profile"><Github size={15} strokeWidth={1.7} /></a></div><div className="widget-links">{githubProjects.map(([name, url]) => <a href={url} target="_blank" rel="noreferrer" key={name}>{name}<span>↗</span></a>)}</div></article>;
-}
+type GitHubActivity = { publicRepositories: number; followers: number; commits: number; pullRequests: number; days: { date: string; commits: number; pullRequests: number }[] };
 
-type UsageSnapshot = {
-  github: null | { publicRepositories: number; followers: number; commits: number; pullRequests: number; days: { date: string; commits: number; pullRequests: number }[] };
-  cursor: null | { status: "ready" | "needs-configuration" | "unavailable"; agentRequests?: number; composerRequests?: number; acceptedTabs?: number; acceptedLines?: number; days?: { date: string; requests: number }[] };
-};
-
-function UsageWidgets() {
-  const [usage, setUsage] = useState<UsageSnapshot | null>(null);
+function GitHubActivityWidget() {
+  const [activity, setActivity] = useState<GitHubActivity | null>(null);
+  const [unavailable, setUnavailable] = useState(false);
 
   useEffect(() => {
     let active = true;
     fetch("/api/usage", { cache: "no-store" })
-      .then((response) => response.ok ? response.json() as Promise<UsageSnapshot> : Promise.reject(new Error("Usage data unavailable")))
-      .then((data) => { if (active) setUsage(data); })
-      .catch(() => { if (active) setUsage({ github: null, cursor: { status: "unavailable" } }); });
+      .then((response) => response.ok ? response.json() as Promise<{ github: GitHubActivity | null }> : Promise.reject(new Error("GitHub activity unavailable")))
+      .then((data) => { if (active) { setActivity(data.github); setUnavailable(!data.github); } })
+      .catch(() => { if (active) setUnavailable(true); });
     return () => { active = false; };
   }, []);
 
-  return <section className="usage-widgets" aria-label="Developer usage">
-    <article className="usage-card glass-card">
-      <div className="usage-card-heading"><span className="widget-label">GITHUB ACTIVITY · 14 DAYS</span><a href={identity.github} target="_blank" rel="noreferrer" aria-label="Open GitHub profile"><Github size={16} strokeWidth={1.7} /></a></div>
-      {usage?.github ? <>
-        <div className="usage-stat-row"><div><strong>{usage.github.commits}</strong><span>public commits</span></div><div><strong>{usage.github.pullRequests}</strong><span>pull requests</span></div><div><strong>{usage.github.publicRepositories}</strong><span>public repos</span></div></div>
-        <div className="usage-bars" aria-label="Daily GitHub commits for the last 14 days">{usage.github.days.map((day) => { const activity = day.commits * 4 + day.pullRequests * 6; return <span key={day.date} title={`${day.date}: ${day.commits} commits, ${day.pullRequests} pull requests`} style={{ height: `${activity ? Math.min(28, activity) : 2}px`, opacity: activity ? 1 : .28 }} />; })}</div>
-        <p className="usage-caption">Public activity only · {usage.github.followers} followers</p>
-      </> : <p className="usage-empty">{usage ? "Public GitHub activity is temporarily unavailable." : "Loading public activity…"}</p>}
-    </article>
-    <article className="usage-card glass-card">
-      <div className="usage-card-heading"><span className="widget-label">CURSOR USAGE · 14 DAYS</span><span className="usage-live-mark" aria-hidden="true" /></div>
-      {usage?.cursor?.status === "ready" ? <>
-        <div className="usage-stat-row"><div><strong>{usage.cursor.agentRequests}</strong><span>agent requests</span></div><div><strong>{usage.cursor.composerRequests}</strong><span>composer requests</span></div><div><strong>{usage.cursor.acceptedTabs}</strong><span>accepted tabs</span></div></div>
-        <div className="usage-bars cursor-usage-bars" aria-label="Daily Cursor requests for the last 14 days">{usage.cursor.days?.map((day) => <span key={day.date} title={`${day.date}: ${day.requests} requests`} style={{ height: `${day.requests ? Math.min(28, day.requests * 2) : 2}px`, opacity: day.requests ? 1 : .28 }} />)}</div>
-        <p className="usage-caption">{usage.cursor.acceptedLines} AI-accepted lines · private metrics, shown only as totals</p>
-      </> : <div className="usage-empty cursor-empty"><p>{usage?.cursor?.status === "needs-configuration" ? "Connect a Cursor team admin key to show verified personal usage." : usage?.cursor?.status === "unavailable" || usage ? "Cursor usage is temporarily unavailable." : "Checking Cursor usage connection…"}</p><a href="https://cursor.com/dashboard" target="_blank" rel="noreferrer">Open Cursor dashboard <ArrowUpRight size={13} /></a></div>}
-    </article>
-  </section>;
+  return <article className="home-widget glass-card github-activity-widget" aria-label="GitHub activity"><div className="usage-card-heading"><span className="widget-label">GITHUB ACTIVITY · 14 DAYS</span><a href={identity.github} target="_blank" rel="noreferrer" aria-label="Open GitHub profile"><Github size={16} strokeWidth={1.7} /></a></div>
+    {activity ? <><div className="usage-stat-row"><div><strong>{activity.commits}</strong><span>public commits</span></div><div><strong>{activity.pullRequests}</strong><span>pull requests</span></div><div><strong>{activity.publicRepositories}</strong><span>public repos</span></div></div><div className="usage-bars" aria-label="Daily GitHub commits for the last 14 days">{activity.days.map((day) => { const count = day.commits * 4 + day.pullRequests * 6; return <span key={day.date} title={`${day.date}: ${day.commits} commits, ${day.pullRequests} pull requests`} style={{ height: `${count ? Math.min(28, count) : 2}px`, opacity: count ? 1 : .28 }} />; })}</div><p className="usage-caption">Public activity only · {activity.followers} followers</p></> : <p className="usage-empty">{unavailable ? "Public GitHub activity is temporarily unavailable." : "Loading public activity…"}</p>}
+  </article>;
 }
 
 function StoryWidget({ label, posts, source }: { label: string; posts: string[][]; source: string }) {
@@ -232,7 +211,7 @@ function HomeWidgetGrid({ widgets, onDraggingChange }: {
   widgets: { id: HomeWidgetId; content: ReactNode }[];
   onDraggingChange: (id: HomeWidgetId | null) => void;
 }) {
-  const [order, setOrder] = useState<HomeWidgetId[]>(["now", "github", "linkedin", "medium", "usage"]);
+  const [order, setOrder] = useState<HomeWidgetId[]>(["now", "github", "linkedin", "medium"]);
   const [draggingId, setDraggingId] = useState<HomeWidgetId | null>(null);
   const boardRef = useRef<HTMLDivElement>(null);
   const stopDragRef = useRef<(() => void) | null>(null);
@@ -290,7 +269,7 @@ function HomeWidgetGrid({ widgets, onDraggingChange }: {
     });
   };
 
-  return <div className={`home-widgets ${widgets.some((widget) => widget.id === "usage") ? "has-usage" : ""}`} ref={boardRef} aria-label="Draggable home widgets">
+  return <div className="home-widgets" ref={boardRef} aria-label="Draggable home widgets">
     {order.map((id) => <div key={id} data-widget-id={id} className={`home-widget-slot ${draggingId === id ? "is-dragging" : ""}`} role="group" tabIndex={0} aria-label={`${id} widget. Drag to reorder, or use arrow keys.`} onPointerDown={(event) => beginDrag(event, id)} onKeyDown={(event) => {
         if (event.target !== event.currentTarget) return;
         if (["ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown"].includes(event.key)) {
@@ -404,7 +383,7 @@ export default function Home() {
   };
 
   const dockItems: { label: string; icon: LucideIcon; window?: WindowId }[] = [{ label: "Home", icon: House }, { label: "Phone", icon: Smartphone, window: "phone" }, { label: "Mail", icon: Mail }, { label: "Terminal", icon: SquareTerminal, window: "terminal" }, { label: "Theme", icon: Sparkles }];
-  const homeWidgets = [{ id: "now" as const, content: <RoleWidget /> }, { id: "github" as const, content: <GitHubWidget /> }, { id: "linkedin" as const, content: <StoryWidget label="LATEST ON LINKEDIN" posts={linkedinPosts} source="LinkedIn" /> }, { id: "medium" as const, content: <StoryWidget label="LATEST ON MEDIUM" posts={mediumPosts.slice(0, 3).map((post) => [post.date, post.title, post.url])} source="Medium" /> }, { id: "usage" as const, content: <UsageWidgets /> }];
+  const homeWidgets = [{ id: "now" as const, content: <RoleWidget /> }, { id: "github" as const, content: <GitHubActivityWidget /> }, { id: "linkedin" as const, content: <StoryWidget label="LATEST ON LINKEDIN" posts={linkedinPosts} source="LinkedIn" /> }, { id: "medium" as const, content: <StoryWidget label="LATEST ON MEDIUM" posts={mediumPosts.slice(0, 3).map((post) => [post.date, post.title, post.url])} source="Medium" /> }];
 
   return <main className={`desktop theme-${theme} ${cursor.grabbing || draggingWidget ? "is-grabbing" : ""}`}><header className="menu-bar"><strong>{identity.name}</strong><nav><button onClick={goHome}>Home</button><button onClick={() => openWindow("work")}>Work</button><button onClick={() => openWindow("writing")}>Writing</button></nav><span>{time} · {date}</span></header><section className="desktop-scene" id="home"><PointerLight /><div className="ambient ambient-one" /><div className="ambient ambient-two" /><DesktopFolders openWindow={openWindow} /><div className="home-shell"><div className="home-head"><Clock time={time} date={date} /><div className="hero-copy"><p className="eyebrow">AGENTIC AI ✦ MOBILE ENGINEERING</p><h1>{identity.name}<br /><em>{identity.title}</em></h1><p className="hero-line">{identity.homeLine}</p></div><div className="head-space" /></div><HomeWidgetGrid widgets={homeWidgets} onDraggingChange={(id) => { setDraggingWidget(id); if (!id) setCursor((current) => ({ ...current, grabbing: false })); }} /><ToolShelf /></div>{openWindows.filter((id) => !minimizedWindows.includes(id)).map((id) => { const offset = windowOffsets[id]; const isFullscreen = fullscreenWindow === id; return <div key={id} className={`window-layer ${id === "phone" ? "phone-layer" : ""}`} style={{ zIndex: 20 + zOrder.indexOf(id) }}><div className={`content-window ${id === "terminal" ? "terminal-window" : ""} ${id === "phone" ? "phone-window-shell" : ""} ${isFullscreen ? "is-fullscreen" : ""}`} style={{ transform: `translate(calc(-50% + ${offset.x}px), ${offset.y}px)`, zIndex: 20 + zOrder.indexOf(id) }} onPointerDown={() => bringToFront(id)}>{id === "phone" ? <div className="phone-backdrop"><button className="phone-close" aria-label="Close phone portfolio" onClick={() => closeWindow("phone")}>×</button><div className="iphone-frame"><div className="dynamic-island" /><div className="iphone-screen" tabIndex={0} aria-label="Scrollable phone portfolio"><MobilePortfolio prefix="phone" /></div></div></div> : <><WindowBar title={windowTitles[id]} close={() => closeWindow(id)} minimize={() => minimizeWindow(id)} toggleFullscreen={() => toggleFullscreen(id)} isFullscreen={isFullscreen} onDrag={(event) => beginDrag(event, id)} /><div className={id === "terminal" ? "terminal-content" : "content-window-body"}>{windowContent(id)}</div></>}</div></div>; })}</section><section className="mobile-page"><MobilePortfolio prefix="mobile" /></section><nav className="dock desktop-dock" aria-label="Portfolio dock">{dockItems.map((item, index) => { const Icon = item.icon; if (item.label === "Mail") return <a className="dock-item" data-label={item.label} aria-label={item.label} href={`mailto:${identity.email}`} key={item.label}><Icon size={18} strokeWidth={1.7} /></a>; if (item.label === "Theme") return <button className="dock-item" data-label={`${item.label} · ${nextTheme}`} aria-label={`Switch theme to ${nextTheme}`} onClick={() => setTheme(nextTheme)} key={item.label}><Icon size={18} strokeWidth={1.7} /></button>; return <button className="dock-item" data-label={item.label} aria-label={item.label} onClick={() => item.label === "Home" ? goHome() : item.window ? openWindow(item.window) : undefined} key={item.label}><Icon size={18} strokeWidth={1.7} /></button>; })}</nav>{minimizedWindows.length > 0 && <nav className="minimized-windows" aria-label="Minimized windows">{minimizedWindows.map((id) => <button key={id} onClick={() => bringToFront(id)}><span aria-hidden="true">▱</span>{windowTitles[id as Exclude<WindowId, "phone">] ?? "Phone"}</button>)}</nav>}<nav className="mobile-dock"><button onClick={() => document.getElementById("mobile-top")?.scrollIntoView({ behavior: "smooth" })}>Home</button><button onClick={() => document.getElementById("mobile-work")?.scrollIntoView({ behavior: "smooth" })}>Work</button><button onClick={() => document.getElementById("mobile-writing")?.scrollIntoView({ behavior: "smooth" })}>Writing</button><button onClick={() => document.getElementById("mobile-about")?.scrollIntoView({ behavior: "smooth" })}>About</button></nav><div className={`custom-cursor ${cursor.hover ? "is-hover" : ""} ${cursor.grabbing ? "is-grabbing" : ""} ${cursor.text ? "is-text" : ""}`} style={{ left: cursor.x, top: cursor.y }} /></main>;
 }
