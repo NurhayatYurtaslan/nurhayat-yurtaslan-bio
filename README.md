@@ -30,7 +30,7 @@ Neutral, ink, and sand share theme-aware surface, border, and text tokens. Ink w
 
 Desktop folders open Work, GitHub, Writing, and About. Multiple windows may remain open; the last selected window is in front. The terminal only animates `whoami` and `cat now.txt`; it does not execute commands. The tool shelf is separate from the dock and uses the eleven requested brand marks, each in its original colors on a consistent white tile across all themes.
 
-Education and talks are in About only. Personal telephone numbers must not be stored, displayed, or published. The Phone preview has its own touch-scrollable, icon-led bio layout and contains the background desktop scroll while open. The small-screen portfolio has its own scrollable content.
+Education and talks are in About only. Personal telephone numbers must not be stored, displayed, or published. The Phone preview has its own touch-scrollable, icon-led bio layout, a minimal X close button outside the frame, and contains the background desktop scroll while open. The small-screen portfolio has its own scrollable content.
 
 On the desktop home screen, `HomeWidgetGrid` places the Now, GitHub, LinkedIn, and Medium cards in normal CSS Grid flow, without absolute positioning or reserved empty rows. Dragging a card reorders occupied cells; keyboard users can focus a card and use the arrow keys. There are no visible drag handles. The Tools shelf has no enclosing glass card or background, only the consistent white icon tiles. Above 1000px the grid has four columns; at 801–1000px it has two. Cards grow with their content, and the desktop scene can scroll internally on short screens while the outer page and dock stay fixed.
 
