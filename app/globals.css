@@ -48,6 +48,8 @@ a { text-decoration: none; }
 .hero-line { max-width: 560px; margin: 15px auto 0; color: var(--muted); font-size: 13px; line-height: 1.35; }
 
 .home-widgets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; align-items: stretch; }
+.home-widgets.has-usage { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.home-widgets.has-usage > [data-widget-id="usage"] { grid-column: span 2; }
 .home-widget-slot { display: flex; flex-direction: column; min-width: 0; touch-action: none; cursor: grab; }
 .home-widget-slot:focus-visible { outline: 2px solid var(--type); outline-offset: 3px; border-radius: 18px; }
 .home-widget-slot.is-dragging { z-index: 5; cursor: grabbing; transition: none; }
@@ -67,6 +69,24 @@ a { text-decoration: none; }
 .story-line strong { display: -webkit-box; overflow: hidden; color: var(--type); font-size: 9px; line-height: 1.25; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .story-line small { display: block; margin-top: 4px; color: var(--muted); font: 8px 'DM Mono', monospace; }
 .home-widget a:hover strong, .home-widget a:focus-visible strong { text-decoration: underline; }
+
+.usage-widgets { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.usage-widgets .usage-card { min-height: 100%; }
+.usage-card { min-width: 0; min-height: 152px; padding: 16px 18px 13px; border-radius: 18px; }
+.usage-card-heading { display: flex; align-items: center; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid var(--line); color: var(--muted); }
+.usage-card-heading a { display: grid; width: 28px; height: 28px; place-items: center; color: var(--muted); }
+.usage-live-mark { width: 7px; height: 7px; border-radius: 50%; background: #94969a; box-shadow: 0 0 0 3px color-mix(in srgb, var(--muted) 12%, transparent); }
+.usage-stat-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; padding-top: 12px; }
+.usage-stat-row > div { display: grid; gap: 2px; min-width: 0; }
+.usage-stat-row strong { color: var(--type); font-size: 22px; font-weight: 600; letter-spacing: -.06em; line-height: 1.1; }
+.usage-stat-row span, .usage-caption { color: var(--muted); font: 9px 'DM Mono', monospace; }
+.usage-stat-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.usage-bars { display: flex; height: 30px; align-items: end; gap: 5px; margin-top: 10px; }
+.usage-bars span { flex: 1; min-width: 3px; max-width: 18px; border-radius: 3px 3px 1px 1px; background: color-mix(in srgb, var(--type) 48%, transparent); }
+.cursor-usage-bars span { background: color-mix(in srgb, var(--type) 27%, transparent); }
+.usage-caption { margin: 7px 0 0; }
+.usage-empty { display: grid; min-height: 78px; align-content: center; gap: 8px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.cursor-empty a { display: inline-flex; width: fit-content; min-height: 30px; align-items: center; gap: 5px; color: var(--type); font-size: 11px; }
 
 .tool-shelf { align-self: flex-start; width: auto; margin-top: 0; margin-bottom: 2px; padding: 8px 0; background: transparent; border: 0; box-shadow: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
 .tool-shelf.glass-card { background: var(--surface); border: 0; border-radius: 18px; box-shadow: var(--shadow), inset 0 0 0 1px color-mix(in srgb, var(--type) 8%, transparent); backdrop-filter: blur(24px) saturate(110%); -webkit-backdrop-filter: blur(24px) saturate(110%); }
@@ -216,6 +236,9 @@ input, textarea, [contenteditable="true"] { cursor: text !important; }
   .home-widget .story-line small { font-size: 9px; }
 }
 @media (min-width: 801px) and (max-width: 1000px) {
-  .home-widgets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home-widgets, .home-widgets.has-usage { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .home-widgets.has-usage > [data-widget-id="usage"] { grid-column: 1 / -1; }
+  .usage-widgets { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .home-head { min-height: 230px; }
 }
+@media (max-width: 520px) { .usage-card { padding: 14px 12px 12px; } .usage-stat-row { gap: 6px; } .usage-stat-row strong { font-size: 18px; } .usage-stat-row span { font-size: 8px; } }
