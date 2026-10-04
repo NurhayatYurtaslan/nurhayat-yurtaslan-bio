@@ -30,6 +30,6 @@ Neutral, ink, and sand share theme-aware surface, border, and text tokens. Ink w
 
 Desktop folders open Work, GitHub, Writing, and About. Multiple windows may remain open; the last selected window is in front. The terminal only animates `whoami` and `cat now.txt`; it does not execute commands. The tool shelf is separate from the dock and uses the eleven requested brand marks.
 
-Education, talks, and the phone contact are in About only. The Phone preview and small-screen portfolio have their own scrollable content; the outer page remains locked.
+Education and talks are in About only. Personal telephone numbers must not be stored, displayed, or published. The Phone preview and small-screen portfolio have their own scrollable content; the outer page remains locked.
 
-On the desktop home screen, the Now, GitHub, LinkedIn, and Medium widgets can be dragged between grid cells. The layout keeps the Istanbul clock fixed and prevents widgets from covering one another or the dock.
+On the desktop home screen, `HomeWidgetGrid` places the Now, GitHub, LinkedIn, and Medium cards in normal CSS Grid flow, without absolute positioning or reserved empty rows. Dragging reorders occupied cells; the focusable handles also support arrow-key reordering. Above 1000px the grid has four columns; at 801–1000px it has two. Cards grow with their content, and the desktop scene can scroll internally on short screens while the outer page and dock stay fixed.

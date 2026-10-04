@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode, type PointerEvent as ReactPointerEvent } from "react";
 import { BriefcaseBusiness, Folder, Github, House, Mail, PenLine, Smartphone, Sparkles, SquareTerminal, UserRound, type LucideIcon } from "lucide-react";
 import mediumPosts from "../data/medium.json";
 
@@ -8,22 +8,20 @@ type WindowId = "work" | "github" | "writing" | "about" | "terminal" | "phone";
 type HomeWidgetId = "now" | "github" | "linkedin" | "medium";
 type Theme = "neutral" | "ink" | "sand";
 type Offset = { x: number; y: number };
-type WidgetPosition = { column: number; row: number };
 
 const identity = {
   name: "Nurhayat Yurtaslan",
   title: "Agentic AI Developer | Mobile Engineer",
   homeLine: "Agentic AI Developer and Mobile Engineer. Mobile apps, agents, and open source.",
   email: "nurhayatyurtaslan38@gmail.com",
-
   linkedin: "https://www.linkedin.com/in/nurhayatyurtaslan",
   medium: "https://medium.com/@nurhayatyurtaslan",
   github: "https://github.com/NurhayatYurtaslan",
 };
 
 const roles = [
-  { company: "Ticimax", role: "Mobile Engineer", dates: "Since December 2025" },
-  { company: "MasterFabric", role: "Open-source developer", dates: "Since June 2025" },
+  { company: "Ticimax", role: "Mobile Engineer", dates: "since December 2025" },
+  { company: "MasterFabric", role: "Open-source developer and volunteer trainer", dates: "since June 2025" },
 ];
 
 const education = { institution: "Erciyes University", degree: "Electrical and Electronic Engineering", dates: "2018–2022" };
@@ -76,13 +74,6 @@ const windowDefaults: Record<WindowId, Offset> = {
   phone: { x: 0, y: 0 },
 };
 
-const homeWidgetDefaults: Record<HomeWidgetId, WidgetPosition> = {
-  now: { column: 0, row: 0 },
-  github: { column: 1, row: 0 },
-  linkedin: { column: 2, row: 0 },
-  medium: { column: 3, row: 0 },
-};
-
 const windowTitles: Record<Exclude<WindowId, "phone">, string> = {
   work: "Work",
   github: "GitHub",
@@ -104,7 +95,7 @@ function Clock({ time, date }: { time: string; date: string }) {
 }
 
 function RoleWidget() {
-  return <article className="home-widget glass-card role-widget"><span className="widget-label">NOW</span>{roles.map((role) => <div className="role-line" key={role.company}><strong>{role.company}</strong><span>{role.role} · {role.dates}</span></div>)}</article>;
+  return <article className="home-widget glass-card role-widget"><span className="widget-label">NOW</span>{roles.map((role) => <div className="role-line" key={role.company}><strong>{role.company}</strong><span>{role.role}, {role.dates}.</span></div>)}</article>;
 }
 
 function GitHubWidget() {
@@ -124,21 +115,16 @@ function DesktopFolders({ openWindow }: { openWindow: (id: WindowId) => void }) 
   return <aside className="desktop-folders" aria-label="Desktop folders">{folders.map((folder) => <button className="desktop-folder" key={folder.label} onClick={() => openWindow(folder.window)}><Folder size={28} strokeWidth={1.5} /><span>{folder.label}</span></button>)}</aside>;
 }
 
-function Marquee() {
-  const words = ["Flutter", "Swift", "Expo", "Next.js", "Cursor", "MCP"];
-  return <div className="marquee" aria-label="Tools marquee"><div className="marquee-track">{[...words, ...words].map((word, index) => <span key={`${word}-${index}`}>{word}<i>✦</i></span>)}</div></div>;
-}
-
 function TerminalContent() {
-  const fullText = ["> whoami", "Nurhayat Yurtaslan", "> cat now.txt", "Agentic AI Developer | Mobile Engineer", "Ticimax · MasterFabric", "Open source, writing, talks"].join("\n");
+  const fullText = ["> whoami", "Nurhayat Yurtaslan", "> cat now.txt", "Agentic AI Developer | Mobile Engineer", "Ticimax · Mobile Engineer", "MasterFabric · Open-source developer", "Open source, writing, talks."].join("\n");
   const [progress, setProgress] = useState(0);
   useEffect(() => { if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setProgress(fullText.length); return; } const timer = window.setInterval(() => setProgress((value) => Math.min(value + 1, fullText.length)), 42); return () => window.clearInterval(timer); }, [fullText.length]);
   const lines = fullText.slice(0, progress).split("\n");
-  return <div className="terminal-content" aria-label="Read-only terminal output"><div className="terminal-prompt">nurhayat@portfolio:~$</div>{lines.map((line, index) => <div className={index % 2 === 1 ? "terminal-line terminal-output" : "terminal-line"} key={`${index}-${line}`}>{line}{index === lines.length - 1 && progress < fullText.length && <span className="terminal-cursor" />}</div>)}{progress >= fullText.length && <span className="terminal-cursor" />}</div>;
+  return <div className="terminal-content" aria-label="Read-only terminal output"><div className="terminal-prompt">nurhayat@portfolio:~$</div>{lines.map((line, index) => <div className={line.startsWith("> ") ? "terminal-line" : "terminal-line terminal-output"} key={`${index}-${line}`}>{line}{index === lines.length - 1 && progress < fullText.length && <span className="terminal-cursor" />}</div>)}{progress >= fullText.length && <span className="terminal-cursor" />}</div>;
 }
 
 function JobList() {
-  return <div className="content-list">{roles.map((role, index) => <div className="content-row static-row" key={role.company}><span className="row-index">{String(index + 1).padStart(2, "0")}</span><div className="row-main"><h3>{role.company}</h3><small>{role.role} · {role.dates}</small></div></div>)}</div>;
+  return <div className="content-list">{roles.map((role, index) => <div className="content-row static-row" key={role.company}><span className="row-index">{String(index + 1).padStart(2, "0")}</span><div className="row-main"><h3>{role.company}</h3><small>{role.role}, {role.dates}.</small></div></div>)}</div>;
 }
 
 function GitHubList() {
@@ -154,7 +140,137 @@ function AboutContent() {
 }
 
 function MobilePortfolio({ prefix }: { prefix: string }) {
-  return <div className="mobile-portfolio-content" id={`${prefix}-top`}><header className="mobile-profile-head"><span className="mobile-kicker">AGENTIC AI ✦ MOBILE ENGINEERING</span><h2>{identity.name}</h2><p>{identity.title}</p></header><section className="mobile-section" id={`${prefix}-about`}><span className="mobile-section-label">01 / ABOUT</span><p>{bio}</p></section><section className="mobile-section" id={`${prefix}-work`}><span className="mobile-section-label">02 / WORK</span>{roles.map((role) => <div className="mobile-job" key={role.company}><strong>{role.company}</strong><span>{role.role} · {role.dates}</span></div>)}</section><section className="mobile-section" id={`${prefix}-writing`}><span className="mobile-section-label">03 / WRITING</span><span className="mobile-sub-label">GITHUB</span>{githubProjects.map(([name, url]) => <a className="mobile-list-item" href={url} target="_blank" rel="noreferrer" key={url}><div><strong>{name}</strong><small>GitHub repository</small></div><span>↗</span></a>)}<a className="mobile-list-item" href={academy[1]} target="_blank" rel="noreferrer"><div><strong>{academy[0]}</strong><small>Academy · no public repository</small></div><span>↗</span></a><span className="mobile-sub-label">LINKEDIN</span>{linkedinPosts.map(([date, title, url]) => <a className="mobile-list-item" href={url} target="_blank" rel="noreferrer" key={url}><div><strong>{title}</strong><small>{date} · LinkedIn</small></div><span>↗</span></a>)}</section><section className="mobile-section mobile-contact" id={`${prefix}-contact`}><span className="mobile-section-label">04 / CONTACT</span><div className="mobile-links"><a href={`mailto:${identity.email}`}>Email ↗</a><a href={identity.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a><a href={identity.medium} target="_blank" rel="noreferrer">Medium ↗</a><a href={identity.github} target="_blank" rel="noreferrer">GitHub ↗</a></div></section></div>;
+  return <div className="mobile-portfolio-content" id={`${prefix}-top`}><header className="mobile-profile-head"><span className="mobile-kicker">AGENTIC AI ✦ MOBILE ENGINEERING</span><h2>{identity.name}</h2><p>{identity.title}</p></header><section className="mobile-section" id={`${prefix}-about`}><span className="mobile-section-label">01 / ABOUT</span><p>{bio}</p></section><section className="mobile-section" id={`${prefix}-work`}><span className="mobile-section-label">02 / WORK</span>{roles.map((role) => <div className="mobile-job" key={role.company}><strong>{role.company}</strong><span>{role.role}, {role.dates}.</span></div>)}</section><section className="mobile-section" id={`${prefix}-writing`}><span className="mobile-section-label">03 / WRITING</span><span className="mobile-sub-label">GITHUB</span>{githubProjects.map(([name, url]) => <a className="mobile-list-item" href={url} target="_blank" rel="noreferrer" key={url}><div><strong>{name}</strong><small>GitHub repository</small></div><span>↗</span></a>)}<a className="mobile-list-item" href={academy[1]} target="_blank" rel="noreferrer"><div><strong>{academy[0]}</strong><small>Academy · no public repository</small></div><span>↗</span></a><span className="mobile-sub-label">LINKEDIN</span>{linkedinPosts.map(([date, title, url]) => <a className="mobile-list-item" href={url} target="_blank" rel="noreferrer" key={url}><div><strong>{title}</strong><small>{date} · LinkedIn</small></div><span>↗</span></a>)}</section><section className="mobile-section mobile-contact" id={`${prefix}-contact`}><span className="mobile-section-label">04 / CONTACT</span><div className="mobile-links"><a href={`mailto:${identity.email}`}>Email ↗</a><a href={identity.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a><a href={identity.medium} target="_blank" rel="noreferrer">Medium ↗</a><a href={identity.github} target="_blank" rel="noreferrer">GitHub ↗</a></div></section></div>;
+}
+
+function HomeWidgetGrid({ widgets, onDraggingChange }: {
+  widgets: { id: HomeWidgetId; content: ReactNode }[];
+  onDraggingChange: (id: HomeWidgetId | null) => void;
+}) {
+  const [order, setOrder] = useState<HomeWidgetId[]>(["now", "github", "linkedin", "medium"]);
+  const [draggingId, setDraggingId] = useState<HomeWidgetId | null>(null);
+  const boardRef = useRef<HTMLDivElement>(null);
+  const stopDragRef = useRef<(() => void) | null>(null);
+  useEffect(() => () => stopDragRef.current?.(), []);
+
+  const beginDrag = (event: ReactPointerEvent<HTMLDivElement>, id: HomeWidgetId) => {
+    if (event.button !== 0 || (event.target as HTMLElement).closest("a,button")) return;
+    const board = boardRef.current;
+    if (!board) return;
+    stopDragRef.current?.();
+    event.preventDefault();
+    const start = { x: event.clientX, y: event.clientY };
+    const pointerId = event.pointerId;
+    let active = false;
+    const move = (next: PointerEvent) => {
+      if (next.pointerId !== pointerId) return;
+      if (!active && Math.hypot(next.clientX - start.x, next.clientY - start.y) < 5) return;
+      if (!active) { active = true; setDraggingId(id); onDraggingChange(id); }
+      const slots = Array.from(board.children).map((slot) => slot.getBoundingClientRect());
+      const targetIndex = slots.reduce((nearest, rect, index) => {
+        const distance = (box: DOMRect) => Math.hypot(next.clientX - (box.left + box.width / 2), next.clientY - (box.top + box.height / 2));
+        return distance(rect) < distance(slots[nearest]) ? index : nearest;
+      }, 0);
+      setOrder((current) => {
+        const currentIndex = current.indexOf(id);
+        if (currentIndex === targetIndex) return current;
+        const reordered = [...current];
+        reordered.splice(currentIndex, 1);
+        reordered.splice(targetIndex, 0, id);
+        return reordered;
+      });
+    };
+    const stop = () => {
+      setDraggingId(null);
+      onDraggingChange(null);
+      window.removeEventListener("pointermove", move);
+      window.removeEventListener("pointerup", stop);
+      window.removeEventListener("pointercancel", stop);
+      stopDragRef.current = null;
+    };
+    stopDragRef.current = stop;
+    window.addEventListener("pointermove", move);
+    window.addEventListener("pointerup", stop);
+    window.addEventListener("pointercancel", stop);
+  };
+
+  const moveWithKeyboard = (id: HomeWidgetId, direction: number) => {
+    setOrder((current) => {
+      const index = current.indexOf(id);
+      const target = Math.max(0, Math.min(current.length - 1, index + direction));
+      const reordered = [...current];
+      reordered.splice(index, 1);
+      reordered.splice(target, 0, id);
+      return reordered;
+    });
+  };
+
+  return <div className="home-widgets" ref={boardRef} aria-label="Draggable home widgets">
+    {order.map((id) => <div key={id} data-widget-id={id} className={`home-widget-slot ${draggingId === id ? "is-dragging" : ""}`} onPointerDown={(event) => beginDrag(event, id)}>
+      <div className="widget-reorder-handle" role="button" tabIndex={0} aria-label={`Move ${id} widget. Use arrow keys to reorder.`} onKeyDown={(event) => {
+        if (event.target !== event.currentTarget) return;
+        if (["ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown"].includes(event.key)) {
+          event.preventDefault();
+          moveWithKeyboard(id, ["ArrowLeft", "ArrowUp"].includes(event.key) ? -1 : 1);
+        }
+      }}><span aria-hidden="true">⠿</span></div>
+      {widgets.find((widget) => widget.id === id)?.content}
+    </div>)}
+  </div>;
+}
+
+function PointerLight() {
+  const lightRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const light = lightRef.current;
+    if (!light) return;
+    const enabled = window.matchMedia("(prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) and (min-width: 801px)");
+    let frame = 0;
+    let previousTime = 0;
+    let position = { x: window.innerWidth / 2, y: window.innerHeight / 3 };
+    let target = { ...position };
+
+    const paint = () => {
+      light.style.transform = `translate3d(${position.x}px, ${position.y}px, 0) translate(-50%, -50%)`;
+    };
+    const animate = (timestamp: number) => {
+      frame = 0;
+      if (!enabled.matches) return;
+      const elapsed = previousTime ? Math.min(timestamp - previousTime, 64) : 16;
+      previousTime = timestamp;
+      const easing = 1 - Math.exp(-elapsed / 100);
+      position = { x: position.x + (target.x - position.x) * easing, y: position.y + (target.y - position.y) * easing };
+      paint();
+      if (Math.hypot(target.x - position.x, target.y - position.y) > 0.5) {
+        frame = window.requestAnimationFrame(animate);
+      } else {
+        previousTime = 0;
+      }
+    };
+    const move = (event: PointerEvent) => {
+      if (!enabled.matches || event.pointerType === "touch") return;
+      target = { x: event.clientX, y: event.clientY };
+      if (!frame) frame = window.requestAnimationFrame(animate);
+    };
+    const syncMotion = () => {
+      window.cancelAnimationFrame(frame);
+      frame = 0;
+      previousTime = 0;
+      target = { ...position };
+    };
+
+    paint();
+    window.addEventListener("pointermove", move, { passive: true });
+    enabled.addEventListener("change", syncMotion);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener("pointermove", move);
+      enabled.removeEventListener("change", syncMotion);
+    };
+  }, []);
+
+  return <div className="pointer-light" ref={lightRef} aria-hidden="true" />;
 }
 
 export default function Home() {
@@ -164,10 +280,8 @@ export default function Home() {
   const [openWindows, setOpenWindows] = useState<WindowId[]>([]);
   const [zOrder, setZOrder] = useState<WindowId[]>([]);
   const [windowOffsets, setWindowOffsets] = useState<Record<WindowId, Offset>>(windowDefaults);
-  const [widgetPositions, setWidgetPositions] = useState<Record<HomeWidgetId, WidgetPosition>>(homeWidgetDefaults);
   const [draggingWidget, setDraggingWidget] = useState<HomeWidgetId | null>(null);
   const [cursor, setCursor] = useState({ x: 24, y: 24, hover: false, grabbing: false, text: false });
-  const widgetBoardRef = useRef<HTMLDivElement>(null);
   const themes: Theme[] = ["neutral", "ink", "sand"];
   const nextTheme = useMemo(() => themes[(themes.indexOf(theme) + 1) % themes.length], [theme]);
 
@@ -191,8 +305,6 @@ export default function Home() {
   };
   const beginDrag = (event: ReactPointerEvent<HTMLDivElement>, id: WindowId) => { if ((event.target as HTMLElement).closest("button,a")) return; event.preventDefault(); bringToFront(id); const start = { x: event.clientX, y: event.clientY }; const initial = windowOffsets[id]; const move = (next: PointerEvent) => setWindowOffsets((current) => ({ ...current, [id]: snapOffset({ x: initial.x + next.clientX - start.x, y: initial.y + next.clientY - start.y }) })); const end = () => { setCursor((current) => ({ ...current, grabbing: false })); setWindowOffsets((current) => ({ ...current, [id]: snapOffset(current[id]) })); window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", end); }; window.addEventListener("pointermove", move); window.addEventListener("pointerup", end); };
 
-  const nearestOpenWidgetCell = (id: HomeWidgetId, target: WidgetPosition, positions: Record<HomeWidgetId, WidgetPosition>) => { const cells = Array.from({ length: 8 }, (_, index) => ({ column: index % 4, row: Math.floor(index / 4) })); return cells.sort((a, b) => Math.abs(a.column - target.column) + Math.abs(a.row - target.row) - Math.abs(b.column - target.column) - Math.abs(b.row - target.row)).find((cell) => !Object.entries(positions).some(([otherId, position]) => otherId !== id && position.column === cell.column && position.row === cell.row)) ?? positions[id]; };
-  const beginWidgetDrag = (event: ReactPointerEvent<HTMLDivElement>, id: HomeWidgetId) => { if (event.button !== 0 || (event.target as HTMLElement).closest("a,button")) return; const board = widgetBoardRef.current; if (!board) return; event.preventDefault(); setDraggingWidget(id); const move = (next: PointerEvent) => { const bounds = board.getBoundingClientRect(); const target = { column: Math.max(0, Math.min(3, Math.floor(((next.clientX - bounds.left) / bounds.width) * 4))), row: Math.max(0, Math.min(1, Math.floor(((next.clientY - bounds.top) / bounds.height) * 2))) }; setWidgetPositions((current) => ({ ...current, [id]: nearestOpenWidgetCell(id, target, current) })); }; const end = () => { setDraggingWidget(null); setCursor((current) => ({ ...current, grabbing: false })); window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", end); }; window.addEventListener("pointermove", move); window.addEventListener("pointerup", end); };
 
   const windowContent = (id: WindowId) => {
     if (id === "terminal") return <TerminalContent />;
@@ -206,5 +318,5 @@ export default function Home() {
   const dockItems: { label: string; icon: LucideIcon; window?: WindowId }[] = [{ label: "Home", icon: House }, { label: "Work", icon: BriefcaseBusiness, window: "work" }, { label: "GitHub", icon: Github, window: "github" }, { label: "Writing", icon: PenLine, window: "writing" }, { label: "About", icon: UserRound, window: "about" }, { label: "Phone", icon: Smartphone, window: "phone" }, { label: "Mail", icon: Mail }, { label: "Terminal", icon: SquareTerminal, window: "terminal" }, { label: "Theme", icon: Sparkles }];
   const homeWidgets = [{ id: "now" as const, content: <RoleWidget /> }, { id: "github" as const, content: <GitHubWidget /> }, { id: "linkedin" as const, content: <StoryWidget label="LATEST ON LINKEDIN" posts={linkedinPosts} source="LinkedIn" /> }, { id: "medium" as const, content: <StoryWidget label="LATEST ON MEDIUM" posts={mediumPosts.slice(0, 3).map((post) => [post.date, post.title, post.url])} source="Medium" /> }];
 
-  return <main className={`desktop theme-${theme} ${cursor.grabbing || draggingWidget ? "is-grabbing" : ""}`}><header className="menu-bar"><strong>{identity.name}</strong><nav><button onClick={goHome}>Home</button><button onClick={() => openWindow("work")}>Work</button><button onClick={() => openWindow("writing")}>Writing</button></nav><span>{time} · {date}</span></header><section className="desktop-scene" id="home"><div className="ambient ambient-one" /><div className="ambient ambient-two" /><DesktopFolders openWindow={openWindow} /><div className="home-shell"><div className="home-head"><Clock time={time} date={date} /><div className="hero-copy"><p className="eyebrow">AGENTIC AI ✦ MOBILE ENGINEERING</p><h1>{identity.name}<br /><em>{identity.title}</em></h1><p className="hero-line">{identity.homeLine}</p></div><div className="head-space" /></div><div className="home-widgets" ref={widgetBoardRef} aria-label="Draggable home widgets">{homeWidgets.map(({ id, content }) => { const position = widgetPositions[id]; return <div key={id} className={`home-widget-slot ${draggingWidget === id ? "is-dragging" : ""}`} style={{ "--widget-col": position.column, "--widget-row": position.row } as CSSProperties} onPointerDown={(event) => beginWidgetDrag(event, id)} aria-label={`Move ${id} widget`} role="group">{content}</div>; })}</div><ToolShelf /><Marquee /></div>{openWindows.map((id) => { const offset = windowOffsets[id]; return <div key={id} className={`window-layer ${id === "phone" ? "phone-layer" : ""}`} style={{ zIndex: 20 + zOrder.indexOf(id) }}><div className={`content-window ${id === "terminal" ? "terminal-window" : ""} ${id === "phone" ? "phone-window-shell" : ""}`} style={{ transform: `translate(calc(-50% + ${offset.x}px), ${offset.y}px)`, zIndex: 20 + zOrder.indexOf(id) }} onPointerDown={() => bringToFront(id)}>{id === "phone" ? <div className="phone-backdrop"><button className="phone-close" onClick={() => closeWindow("phone")}>Close ×</button><div className="iphone-frame"><div className="dynamic-island" /><div className="iphone-screen"><MobilePortfolio prefix="phone" /></div></div></div> : <><WindowBar title={windowTitles[id]} close={() => closeWindow(id)} onDrag={(event) => beginDrag(event, id)} />{id === "terminal" ? <TerminalContent /> : <div className="content-window-body">{windowContent(id)}</div>}</>}</div></div>; })}</section><section className="mobile-page"><MobilePortfolio prefix="mobile" /></section><nav className="dock desktop-dock" aria-label="Portfolio dock">{dockItems.map((item, index) => { const Icon = item.icon; if (item.label === "Mail") return <a className="dock-item" data-label={item.label} aria-label={item.label} href={`mailto:${identity.email}`} key={item.label}><Icon size={18} strokeWidth={1.7} /></a>; if (item.label === "Theme") return <button className="dock-item" data-label={`${item.label} · ${nextTheme}`} aria-label={`Switch theme to ${nextTheme}`} onClick={() => setTheme(nextTheme)} key={item.label}><Icon size={18} strokeWidth={1.7} /></button>; return <button className="dock-item" data-label={item.label} aria-label={item.label} onClick={() => item.label === "Home" ? goHome() : item.window ? openWindow(item.window) : undefined} key={item.label}><Icon size={18} strokeWidth={1.7} /></button>; })}</nav><nav className="mobile-dock"><button onClick={() => document.getElementById("mobile-top")?.scrollIntoView({ behavior: "smooth" })}>Home</button><button onClick={() => document.getElementById("mobile-work")?.scrollIntoView({ behavior: "smooth" })}>Work</button><button onClick={() => document.getElementById("mobile-writing")?.scrollIntoView({ behavior: "smooth" })}>Writing</button><button onClick={() => document.getElementById("mobile-about")?.scrollIntoView({ behavior: "smooth" })}>About</button></nav><div className={`custom-cursor ${cursor.hover ? "is-hover" : ""} ${cursor.grabbing ? "is-grabbing" : ""} ${cursor.text ? "is-text" : ""}`} style={{ left: cursor.x, top: cursor.y }} /></main>;
+  return <main className={`desktop theme-${theme} ${cursor.grabbing || draggingWidget ? "is-grabbing" : ""}`}><header className="menu-bar"><strong>{identity.name}</strong><nav><button onClick={goHome}>Home</button><button onClick={() => openWindow("work")}>Work</button><button onClick={() => openWindow("writing")}>Writing</button></nav><span>{time} · {date}</span></header><section className="desktop-scene" id="home"><PointerLight /><div className="ambient ambient-one" /><div className="ambient ambient-two" /><DesktopFolders openWindow={openWindow} /><div className="home-shell"><div className="home-head"><Clock time={time} date={date} /><div className="hero-copy"><p className="eyebrow">AGENTIC AI ✦ MOBILE ENGINEERING</p><h1>{identity.name}<br /><em>{identity.title}</em></h1><p className="hero-line">{identity.homeLine}</p></div><div className="head-space" /></div><HomeWidgetGrid widgets={homeWidgets} onDraggingChange={(id) => { setDraggingWidget(id); if (!id) setCursor((current) => ({ ...current, grabbing: false })); }} /><ToolShelf /></div>{openWindows.map((id) => { const offset = windowOffsets[id]; return <div key={id} className={`window-layer ${id === "phone" ? "phone-layer" : ""}`} style={{ zIndex: 20 + zOrder.indexOf(id) }}><div className={`content-window ${id === "terminal" ? "terminal-window" : ""} ${id === "phone" ? "phone-window-shell" : ""}`} style={{ transform: `translate(calc(-50% + ${offset.x}px), ${offset.y}px)`, zIndex: 20 + zOrder.indexOf(id) }} onPointerDown={() => bringToFront(id)}>{id === "phone" ? <div className="phone-backdrop"><button className="phone-close" onClick={() => closeWindow("phone")}>Close ×</button><div className="iphone-frame"><div className="dynamic-island" /><div className="iphone-screen"><MobilePortfolio prefix="phone" /></div></div></div> : <><WindowBar title={windowTitles[id]} close={() => closeWindow(id)} onDrag={(event) => beginDrag(event, id)} />{id === "terminal" ? <TerminalContent /> : <div className="content-window-body">{windowContent(id)}</div>}</>}</div></div>; })}</section><section className="mobile-page"><MobilePortfolio prefix="mobile" /></section><nav className="dock desktop-dock" aria-label="Portfolio dock">{dockItems.map((item, index) => { const Icon = item.icon; if (item.label === "Mail") return <a className="dock-item" data-label={item.label} aria-label={item.label} href={`mailto:${identity.email}`} key={item.label}><Icon size={18} strokeWidth={1.7} /></a>; if (item.label === "Theme") return <button className="dock-item" data-label={`${item.label} · ${nextTheme}`} aria-label={`Switch theme to ${nextTheme}`} onClick={() => setTheme(nextTheme)} key={item.label}><Icon size={18} strokeWidth={1.7} /></button>; return <button className="dock-item" data-label={item.label} aria-label={item.label} onClick={() => item.label === "Home" ? goHome() : item.window ? openWindow(item.window) : undefined} key={item.label}><Icon size={18} strokeWidth={1.7} /></button>; })}</nav><nav className="mobile-dock"><button onClick={() => document.getElementById("mobile-top")?.scrollIntoView({ behavior: "smooth" })}>Home</button><button onClick={() => document.getElementById("mobile-work")?.scrollIntoView({ behavior: "smooth" })}>Work</button><button onClick={() => document.getElementById("mobile-writing")?.scrollIntoView({ behavior: "smooth" })}>Writing</button><button onClick={() => document.getElementById("mobile-about")?.scrollIntoView({ behavior: "smooth" })}>About</button></nav><div className={`custom-cursor ${cursor.hover ? "is-hover" : ""} ${cursor.grabbing ? "is-grabbing" : ""} ${cursor.text ? "is-text" : ""}`} style={{ left: cursor.x, top: cursor.y }} /></main>;
 }
