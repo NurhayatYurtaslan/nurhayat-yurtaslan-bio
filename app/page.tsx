@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type PointerEvent as ReactPointerEvent } from "react";
+import { BriefcaseBusiness, Folder, Github, House, Mail, PenLine, Smartphone, Sparkles, SquareTerminal, UserRound, type LucideIcon } from "lucide-react";
 import mediumPosts from "../data/medium.json";
 
-type WindowId = "work" | "github" | "linkedin" | "medium" | "about" | "terminal" | "phone";
+type WindowId = "work" | "github" | "writing" | "about" | "terminal" | "phone";
 type HomeWidgetId = "now" | "github" | "linkedin" | "medium";
 type Theme = "neutral" | "ink" | "sand";
 type Offset = { x: number; y: number };
@@ -12,27 +13,32 @@ type WidgetPosition = { column: number; row: number };
 const identity = {
   name: "Nurhayat Yurtaslan",
   title: "Agentic AI Developer | Mobile Engineer",
+  homeLine: "Agentic AI Developer and Mobile Engineer. Mobile apps, agents, and open source.",
   email: "nurhayatyurtaslan38@gmail.com",
-  linkedin: "https://www.linkedin.com/in/nurhayat-yurtaslan",
-  medium: "https://nurhayatyurtaslan.medium.com",
+
+  linkedin: "https://www.linkedin.com/in/nurhayatyurtaslan",
+  medium: "https://medium.com/@nurhayatyurtaslan",
   github: "https://github.com/NurhayatYurtaslan",
 };
 
 const roles = [
-  { company: "Ticimax", role: "Mobile Engineer", dates: "Since December 2025", description: "Building mobile products with Flutter." },
-  { company: "MasterFabric", role: "Open-source developer", dates: "Since June 2025", description: "Contributing to shared mobile tools and frameworks." },
+  { company: "Ticimax", role: "Mobile Engineer", dates: "Since December 2025" },
+  { company: "MasterFabric", role: "Open-source developer", dates: "Since June 2025" },
 ];
 
-const githubRepos = [
-  ["syspect", "https://github.com/NurhayatYurtaslan/syspect"],
-  ["learn-widget", "https://github.com/NurhayatYurtaslan/learn-widget"],
-  ["pupilica_hackathon", "https://github.com/NurhayatYurtaslan/pupilica_hackathon"],
-  ["anka_super_loading_package", "https://github.com/NurhayatYurtaslan/anka_super_loading_package"],
-  ["super_button_package", "https://github.com/NurhayatYurtaslan/super_button_package"],
-  ["spotify_clone_app", "https://github.com/NurhayatYurtaslan/spotify_clone_app"],
-  ["ozgecmis", "https://github.com/NurhayatYurtaslan/ozgecmis"],
-  ["data-structures-and-algorithms-in-dart", "https://github.com/NurhayatYurtaslan/data-structures-and-algorithms-in-dart"],
+const education = { institution: "Erciyes University", degree: "Electrical and Electronic Engineering", dates: "2018–2022" };
+
+const githubProjects = [
+  ["Expo", "https://github.com/masterfabric-mobile/masterfabric-expo"],
+  ["Website", "https://github.com/masterfabric-mobile/masterfabric-website"],
+  ["SwiftCamp", "https://github.com/masterfabric-mobile/swift-camp"],
+  ["Manifesto", "https://github.com/masterfabric/manifesto"],
+  ["Welcome", "https://github.com/gurkanfikretgunak/welcome"],
+  ["Project tracker", "https://github.com/masterfabric/masterfabric-project-tracker"],
+  ["One Hundred Days", "https://github.com/masterfabric/one-hundered-days"],
 ];
+
+const academy = ["Academy", "https://academy-app.masterfabric.co"];
 
 const linkedinPosts = [
   ["4 Oct 2026", "How one Laya call becomes a distribution, and where the program has to stop", "https://www.linkedin.com/pulse/how-one-laya-call-becomes-distribution-where-program-has-yurtaslan-wdrvf"],
@@ -40,7 +46,12 @@ const linkedinPosts = [
   ["25 Sep 2026", "What Should a Model Know? Parametric Memory, Retrieval, and the Real Divide Between Fine-Tuning and RAG", "https://www.linkedin.com/pulse/what-should-model-know-parametric-memory-retrieval-real-yurtaslan-quvqf"],
 ];
 
-const bio = "I build mobile products and agentic AI systems, with a focus on useful interfaces, shared tools, and work that can be understood in public.";
+const talks = [
+  ["I am an Agentic AI Developer", "AI Startup Factory · Türkiye İş Bankası · Tech Istanbul"],
+  ["Flutter and Cursor", "IEEE Karabük"],
+];
+
+const bio = identity.homeLine;
 
 const tools = [
   ["Cursor", "cursor"],
@@ -57,7 +68,12 @@ const tools = [
 ] as const;
 
 const windowDefaults: Record<WindowId, Offset> = {
-  work: { x: 108, y: 30 }, github: { x: 132, y: 54 }, linkedin: { x: 156, y: 78 }, medium: { x: 180, y: 102 }, about: { x: 204, y: 54 }, terminal: { x: 228, y: 30 }, phone: { x: 0, y: 0 },
+  work: { x: 84, y: 25 },
+  github: { x: 108, y: 49 },
+  writing: { x: 132, y: 73 },
+  about: { x: 156, y: 97 },
+  terminal: { x: 180, y: 25 },
+  phone: { x: 0, y: 0 },
 };
 
 const homeWidgetDefaults: Record<HomeWidgetId, WidgetPosition> = {
@@ -70,8 +86,7 @@ const homeWidgetDefaults: Record<HomeWidgetId, WidgetPosition> = {
 const windowTitles: Record<Exclude<WindowId, "phone">, string> = {
   work: "Work",
   github: "GitHub",
-  linkedin: "LinkedIn",
-  medium: "Medium",
+  writing: "Writing",
   about: "About",
   terminal: "Terminal",
 };
@@ -89,11 +104,11 @@ function Clock({ time, date }: { time: string; date: string }) {
 }
 
 function RoleWidget() {
-  return <article className="home-widget glass-card role-widget"><span className="widget-label">NOW</span>{roles.map((role) => <div className="role-line" key={role.company}><strong>{role.company}</strong><span>{role.role}</span></div>)}</article>;
+  return <article className="home-widget glass-card role-widget"><span className="widget-label">NOW</span>{roles.map((role) => <div className="role-line" key={role.company}><strong>{role.company}</strong><span>{role.role} · {role.dates}</span></div>)}</article>;
 }
 
 function GitHubWidget() {
-  return <article className="home-widget glass-card github-widget"><div className="widget-heading"><span className="widget-label">GITHUB</span><a href={identity.github} target="_blank" rel="noreferrer" aria-label="Open GitHub profile">↗</a></div><h3>Open source</h3><div className="widget-links">{githubRepos.slice(0, 6).map(([name, url]) => <a href={url} target="_blank" rel="noreferrer" key={name}>{name}<span>↗</span></a>)}</div></article>;
+  return <article className="home-widget glass-card github-widget"><div className="widget-heading"><span className="widget-label">GITHUB</span><a href={identity.github} target="_blank" rel="noreferrer" aria-label="Open GitHub profile"><Github size={15} strokeWidth={1.7} /></a></div><div className="widget-links">{githubProjects.map(([name, url]) => <a href={url} target="_blank" rel="noreferrer" key={name}>{name}<span>↗</span></a>)}</div></article>;
 }
 
 function StoryWidget({ label, posts, source }: { label: string; posts: string[][]; source: string }) {
@@ -104,16 +119,42 @@ function ToolShelf() {
   return <section className="tool-shelf glass-card" aria-label="Tools"><span className="widget-label">TOOLS</span><div className="tool-grid">{tools.map(([name, slug]) => <div className="tool-item" key={name}><span className="tool-mark"><img src={`https://cdn.simpleicons.org/${slug}`} alt={`${name} official mark`} /></span><small>{name}</small></div>)}</div></section>;
 }
 
+function DesktopFolders({ openWindow }: { openWindow: (id: WindowId) => void }) {
+  const folders: { label: string; window: WindowId }[] = [{ label: "Work", window: "work" }, { label: "GitHub", window: "github" }, { label: "Writing", window: "writing" }, { label: "About", window: "about" }];
+  return <aside className="desktop-folders" aria-label="Desktop folders">{folders.map((folder) => <button className="desktop-folder" key={folder.label} onClick={() => openWindow(folder.window)}><Folder size={28} strokeWidth={1.5} /><span>{folder.label}</span></button>)}</aside>;
+}
+
+function Marquee() {
+  const words = ["Flutter", "Swift", "Expo", "Next.js", "Cursor", "MCP"];
+  return <div className="marquee" aria-label="Tools marquee"><div className="marquee-track">{[...words, ...words].map((word, index) => <span key={`${word}-${index}`}>{word}<i>✦</i></span>)}</div></div>;
+}
+
 function TerminalContent() {
-  const fullText = ["> whoami", "Nurhayat Yurtaslan — Agentic AI Developer | Mobile Engineer", "> cat now.txt", "Ticimax · MasterFabric"].join("\n");
+  const fullText = ["> whoami", "Nurhayat Yurtaslan", "> cat now.txt", "Agentic AI Developer | Mobile Engineer", "Ticimax · MasterFabric", "Open source, writing, talks"].join("\n");
   const [progress, setProgress] = useState(0);
   useEffect(() => { if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setProgress(fullText.length); return; } const timer = window.setInterval(() => setProgress((value) => Math.min(value + 1, fullText.length)), 42); return () => window.clearInterval(timer); }, [fullText.length]);
   const lines = fullText.slice(0, progress).split("\n");
   return <div className="terminal-content" aria-label="Read-only terminal output"><div className="terminal-prompt">nurhayat@portfolio:~$</div>{lines.map((line, index) => <div className={index % 2 === 1 ? "terminal-line terminal-output" : "terminal-line"} key={`${index}-${line}`}>{line}{index === lines.length - 1 && progress < fullText.length && <span className="terminal-cursor" />}</div>)}{progress >= fullText.length && <span className="terminal-cursor" />}</div>;
 }
 
+function JobList() {
+  return <div className="content-list">{roles.map((role, index) => <div className="content-row static-row" key={role.company}><span className="row-index">{String(index + 1).padStart(2, "0")}</span><div className="row-main"><h3>{role.company}</h3><small>{role.role} · {role.dates}</small></div></div>)}</div>;
+}
+
+function GitHubList() {
+  return <div className="content-list">{githubProjects.map(([name, url], index) => <ExternalRow key={name} index={index + 1} title={name} meta="GitHub repository" url={url} />)}<ExternalRow index={githubProjects.length + 1} title={academy[0]} meta="Academy · no public repository" url={academy[1]} /></div>;
+}
+
+function WritingList() {
+  return <><span className="group-label">LINKEDIN</span><div className="content-list">{linkedinPosts.map(([date, title, url], index) => <ExternalRow key={url} index={index + 1} title={title} meta={date} url={url} />)}</div><span className="group-label">MEDIUM</span><div className="content-list">{mediumPosts.slice(0, 3).map((post, index) => <ExternalRow key={post.url} index={index + 1} title={post.title} meta={post.date} description={post.summary} url={post.url} />)}</div></>;
+}
+
+function AboutContent() {
+  return <><span className="eyebrow">04 / ABOUT</span><h2>{identity.name}<br /><em>{identity.title}</em></h2><p className="window-intro">{bio}</p><span className="group-label">CURRENT ROLES</span><JobList /><span className="group-label">EDUCATION</span><div className="education-row"><strong>{education.institution}</strong><span>{education.degree} · {education.dates}</span></div><span className="group-label">TALKS</span><div className="content-list">{talks.map(([title, venue], index) => <div className="content-row static-row" key={title}><span className="row-index">{String(index + 1).padStart(2, "0")}</span><div className="row-main"><h3>{title}</h3><small>{venue}</small></div></div>)}</div><span className="group-label">CONTACT</span><div className="about-links"><a href={`mailto:${identity.email}`}>Email <span>↗</span></a><a href={identity.linkedin} target="_blank" rel="noreferrer">LinkedIn <span>↗</span></a><a href={identity.medium} target="_blank" rel="noreferrer">Medium <span>↗</span></a><a href={identity.github} target="_blank" rel="noreferrer">GitHub <span>↗</span></a></div></>;
+}
+
 function MobilePortfolio({ prefix }: { prefix: string }) {
-  return <div className="mobile-portfolio-content" id={`${prefix}-top`}><header className="mobile-profile-head"><span className="mobile-kicker">AGENTIC AI ✦ MOBILE ENGINEERING</span><h2>{identity.name}</h2><p>{identity.title}</p></header><section className="mobile-section" id={`${prefix}-about`}><span className="mobile-section-label">01 / ABOUT</span><p>{bio}</p></section><section className="mobile-section" id={`${prefix}-work`}><span className="mobile-section-label">02 / WORK</span>{roles.map((role) => <div className="mobile-job" key={role.company}><strong>{role.company}</strong><span>{role.role} · {role.dates}</span><p>{role.description}</p></div>)}</section><section className="mobile-section" id={`${prefix}-writing`}><span className="mobile-section-label">03 / WRITING</span>{linkedinPosts.map(([date, title, url]) => <a className="mobile-list-item" href={url} target="_blank" rel="noreferrer" key={url}><div><strong>{title}</strong><small>{date} · LinkedIn</small></div><span>↗</span></a>)}{mediumPosts.slice(0, 3).map((post) => <a className="mobile-list-item" href={post.url} target="_blank" rel="noreferrer" key={post.url}><div><strong>{post.title}</strong><small>{post.date} · Medium</small></div><span>↗</span></a>)}</section><section className="mobile-section mobile-contact"><span className="mobile-section-label">04 / CONTACT</span><div className="mobile-links"><a href={`mailto:${identity.email}`}>Email ↗</a><a href={identity.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a><a href={identity.medium} target="_blank" rel="noreferrer">Medium ↗</a><a href={identity.github} target="_blank" rel="noreferrer">GitHub ↗</a></div></section></div>;
+  return <div className="mobile-portfolio-content" id={`${prefix}-top`}><header className="mobile-profile-head"><span className="mobile-kicker">AGENTIC AI ✦ MOBILE ENGINEERING</span><h2>{identity.name}</h2><p>{identity.title}</p></header><section className="mobile-section" id={`${prefix}-about`}><span className="mobile-section-label">01 / ABOUT</span><p>{bio}</p></section><section className="mobile-section" id={`${prefix}-work`}><span className="mobile-section-label">02 / WORK</span>{roles.map((role) => <div className="mobile-job" key={role.company}><strong>{role.company}</strong><span>{role.role} · {role.dates}</span></div>)}</section><section className="mobile-section" id={`${prefix}-writing`}><span className="mobile-section-label">03 / WRITING</span><span className="mobile-sub-label">GITHUB</span>{githubProjects.map(([name, url]) => <a className="mobile-list-item" href={url} target="_blank" rel="noreferrer" key={url}><div><strong>{name}</strong><small>GitHub repository</small></div><span>↗</span></a>)}<a className="mobile-list-item" href={academy[1]} target="_blank" rel="noreferrer"><div><strong>{academy[0]}</strong><small>Academy · no public repository</small></div><span>↗</span></a><span className="mobile-sub-label">LINKEDIN</span>{linkedinPosts.map(([date, title, url]) => <a className="mobile-list-item" href={url} target="_blank" rel="noreferrer" key={url}><div><strong>{title}</strong><small>{date} · LinkedIn</small></div><span>↗</span></a>)}</section><section className="mobile-section mobile-contact" id={`${prefix}-contact`}><span className="mobile-section-label">04 / CONTACT</span><div className="mobile-links"><a href={`mailto:${identity.email}`}>Email ↗</a><a href={identity.linkedin} target="_blank" rel="noreferrer">LinkedIn ↗</a><a href={identity.medium} target="_blank" rel="noreferrer">Medium ↗</a><a href={identity.github} target="_blank" rel="noreferrer">GitHub ↗</a></div></section></div>;
 }
 
 export default function Home() {
@@ -125,56 +166,45 @@ export default function Home() {
   const [windowOffsets, setWindowOffsets] = useState<Record<WindowId, Offset>>(windowDefaults);
   const [widgetPositions, setWidgetPositions] = useState<Record<HomeWidgetId, WidgetPosition>>(homeWidgetDefaults);
   const [draggingWidget, setDraggingWidget] = useState<HomeWidgetId | null>(null);
-  const [cursor, setCursor] = useState({ x: 24, y: 24, hover: false, grabbing: false });
+  const [cursor, setCursor] = useState({ x: 24, y: 24, hover: false, grabbing: false, text: false });
   const widgetBoardRef = useRef<HTMLDivElement>(null);
   const themes: Theme[] = ["neutral", "ink", "sand"];
   const nextTheme = useMemo(() => themes[(themes.indexOf(theme) + 1) % themes.length], [theme]);
 
   useEffect(() => { const update = () => { const now = new Date(); setTime(new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Istanbul" }).format(now)); setDate(new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "2-digit", month: "long", year: "numeric", timeZone: "Europe/Istanbul" }).format(now)); }; update(); const timer = window.setInterval(update, 30_000); return () => window.clearInterval(timer); }, []);
   useEffect(() => { document.body.style.overflow = openWindows.includes("phone") ? "hidden" : ""; return () => { document.body.style.overflow = ""; }; }, [openWindows]);
-  useEffect(() => { const move = (event: PointerEvent) => { const target = event.target as HTMLElement; setCursor({ x: event.clientX, y: event.clientY, hover: Boolean(target.closest("a,button,.window-bar")), grabbing: event.buttons > 0 }); }; window.addEventListener("pointermove", move); return () => window.removeEventListener("pointermove", move); }, []);
+  useEffect(() => { const move = (event: PointerEvent) => { const target = event.target as HTMLElement; const textField = target.closest("input,textarea,[contenteditable=true]"); setCursor({ x: event.clientX, y: event.clientY, hover: Boolean(target.closest("a,button,.window-bar")), grabbing: event.buttons > 0, text: Boolean(textField) }); }; window.addEventListener("pointermove", move); return () => window.removeEventListener("pointermove", move); }, []);
 
-  const openWindow = (id: WindowId) => { setOpenWindows((current) => current.includes(id) ? current : [...current, id]); setZOrder((current) => [...current.filter((item) => item !== id), id]); };
+  const openWindow = (id: WindowId) => { if (id !== "phone") setWindowOffsets((current) => ({ ...current, [id]: snapOffset(current[id]) })); setOpenWindows((current) => current.includes(id) ? current : [...current, id]); setZOrder((current) => [...current.filter((item) => item !== id), id]); };
   const closeWindow = (id: WindowId) => { setOpenWindows((current) => current.filter((item) => item !== id)); setZOrder((current) => current.filter((item) => item !== id)); };
+  const goHome = () => { setOpenWindows([]); setZOrder([]); document.getElementById("home")?.scrollIntoView(); };
   const bringToFront = (id: WindowId) => { setZOrder((current) => [...current.filter((item) => item !== id), id]); setOpenWindows((current) => [...current.filter((item) => item !== id), id]); };
-  const snapOffset = (offset: Offset): Offset => { if (typeof window === "undefined") return offset; const viewportWidth = window.innerWidth; const viewportHeight = window.innerHeight; const width = Math.min(720, viewportWidth - 64); const clockRight = viewportWidth * 0.068 + 178; const center = viewportWidth / 2; const safeLeft = clockRight + 24; const minimumX = Math.max(80, safeLeft - (center - width / 2)); const maximumY = Math.max(-24, Math.min(112, viewportHeight - 240)); return { x: Math.round(Math.max(minimumX, Math.min(viewportWidth * 0.38, offset.x)) / 24) * 24, y: Math.round(Math.max(-24, Math.min(maximumY, offset.y)) / 24) * 24 }; };
+  const snapOffset = (offset: Offset): Offset => {
+    const clock = document.querySelector(".clock-card")?.getBoundingClientRect();
+    const safeLeft = (clock?.right ?? 200) + 18;
+    const width = Math.min(720, window.innerWidth - safeLeft - 24);
+    const left = window.innerWidth / 2 - width / 2;
+    const minimumX = safeLeft - left;
+    const maximumX = window.innerWidth - 24 - width - left;
+    const maximumY = Math.max(0, window.innerHeight - 140 - Math.min(560, window.innerHeight - 160));
+    return { x: Math.max(minimumX, Math.min(maximumX, Math.round(offset.x / 12) * 12)), y: Math.max(0, Math.min(maximumY, Math.round(offset.y / 12) * 12)) };
+  };
   const beginDrag = (event: ReactPointerEvent<HTMLDivElement>, id: WindowId) => { if ((event.target as HTMLElement).closest("button,a")) return; event.preventDefault(); bringToFront(id); const start = { x: event.clientX, y: event.clientY }; const initial = windowOffsets[id]; const move = (next: PointerEvent) => setWindowOffsets((current) => ({ ...current, [id]: snapOffset({ x: initial.x + next.clientX - start.x, y: initial.y + next.clientY - start.y }) })); const end = () => { setCursor((current) => ({ ...current, grabbing: false })); setWindowOffsets((current) => ({ ...current, [id]: snapOffset(current[id]) })); window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", end); }; window.addEventListener("pointermove", move); window.addEventListener("pointerup", end); };
 
-  const nearestOpenWidgetCell = (id: HomeWidgetId, target: WidgetPosition, positions: Record<HomeWidgetId, WidgetPosition>) => {
-    const cells = Array.from({ length: 8 }, (_, index) => ({ column: index % 4, row: Math.floor(index / 4) }));
-    return cells.sort((a, b) => Math.abs(a.column - target.column) + Math.abs(a.row - target.row) - Math.abs(b.column - target.column) - Math.abs(b.row - target.row)).find((cell) => !Object.entries(positions).some(([otherId, position]) => otherId !== id && position.column === cell.column && position.row === cell.row)) ?? positions[id];
-  };
-
-  const beginWidgetDrag = (event: ReactPointerEvent<HTMLDivElement>, id: HomeWidgetId) => {
-    if (event.button !== 0 || (event.target as HTMLElement).closest("a,button")) return;
-    const board = widgetBoardRef.current;
-    if (!board) return;
-    event.preventDefault();
-    setDraggingWidget(id);
-    const move = (next: PointerEvent) => {
-      const bounds = board.getBoundingClientRect();
-      const target = { column: Math.max(0, Math.min(3, Math.floor(((next.clientX - bounds.left) / bounds.width) * 4))), row: Math.max(0, Math.min(1, Math.floor(((next.clientY - bounds.top) / bounds.height) * 2))) };
-      setWidgetPositions((current) => ({ ...current, [id]: nearestOpenWidgetCell(id, target, current) }));
-    };
-    const end = () => { setDraggingWidget(null); setCursor((current) => ({ ...current, grabbing: false })); window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", end); };
-    window.addEventListener("pointermove", move);
-    window.addEventListener("pointerup", end);
-  };
+  const nearestOpenWidgetCell = (id: HomeWidgetId, target: WidgetPosition, positions: Record<HomeWidgetId, WidgetPosition>) => { const cells = Array.from({ length: 8 }, (_, index) => ({ column: index % 4, row: Math.floor(index / 4) })); return cells.sort((a, b) => Math.abs(a.column - target.column) + Math.abs(a.row - target.row) - Math.abs(b.column - target.column) - Math.abs(b.row - target.row)).find((cell) => !Object.entries(positions).some(([otherId, position]) => otherId !== id && position.column === cell.column && position.row === cell.row)) ?? positions[id]; };
+  const beginWidgetDrag = (event: ReactPointerEvent<HTMLDivElement>, id: HomeWidgetId) => { if (event.button !== 0 || (event.target as HTMLElement).closest("a,button")) return; const board = widgetBoardRef.current; if (!board) return; event.preventDefault(); setDraggingWidget(id); const move = (next: PointerEvent) => { const bounds = board.getBoundingClientRect(); const target = { column: Math.max(0, Math.min(3, Math.floor(((next.clientX - bounds.left) / bounds.width) * 4))), row: Math.max(0, Math.min(1, Math.floor(((next.clientY - bounds.top) / bounds.height) * 2))) }; setWidgetPositions((current) => ({ ...current, [id]: nearestOpenWidgetCell(id, target, current) })); }; const end = () => { setDraggingWidget(null); setCursor((current) => ({ ...current, grabbing: false })); window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", end); }; window.addEventListener("pointermove", move); window.addEventListener("pointerup", end); };
 
   const windowContent = (id: WindowId) => {
     if (id === "terminal") return <TerminalContent />;
     if (id === "phone") return <MobilePortfolio prefix="phone" />;
-    if (id === "work") return <><span className="eyebrow">01 / WORK</span><h2>Current roles,<br /><em>clear responsibilities.</em></h2><p className="window-intro">The two roles currently shaping the work.</p><div className="content-list">{roles.map((role, index) => <div className="content-row static-row" key={role.company}><span className="row-index">{String(index + 1).padStart(2, "0")}</span><div className="row-main"><h3>{role.company}</h3><p>{role.description}</p><small>{role.role} · {role.dates}</small></div></div>)}</div></>;
-    if (id === "github") return <><span className="eyebrow">02 / GITHUB</span><h2>Open source,<br /><em>without the noise.</em></h2><p className="window-intro">Repositories already selected for this portfolio. No star counts are shown.</p><div className="content-list">{githubRepos.map(([name, url], index) => <ExternalRow key={name} index={index + 1} title={name} meta="GitHub repository" url={url} />)}</div></>;
-    if (id === "linkedin") return <><span className="eyebrow">03 / LINKEDIN</span><h2>Latest on LinkedIn,<br /><em>fixed and direct.</em></h2><p className="window-intro">These three links stay fixed. The daily feed never scrapes LinkedIn.</p><div className="content-list">{linkedinPosts.map(([dateValue, title, url], index) => <ExternalRow key={url} index={index + 1} title={title} meta={dateValue} url={url} />)}</div></>;
-    if (id === "medium") return <><span className="eyebrow">04 / MEDIUM</span><h2>Latest on Medium,<br /><em>updated automatically.</em></h2><p className="window-intro">The three newest posts from the Medium RSS feed.</p><div className="content-list">{mediumPosts.slice(0, 3).map((post, index) => <ExternalRow key={post.url} index={index + 1} title={post.title} meta={post.date} description={post.summary} url={post.url} />)}</div></>;
-    return <><span className="eyebrow">05 / ABOUT</span><h2>{identity.name}<br /><em>{identity.title}</em></h2><p className="window-intro">{bio}</p><span className="group-label">CURRENT ROLES</span><div className="content-list">{roles.map((role, index) => <div className="content-row static-row" key={role.company}><span className="row-index">{String(index + 1).padStart(2, "0")}</span><div className="row-main"><h3>{role.company}</h3><p>{role.description}</p><small>{role.role} · {role.dates}</small></div></div>)}</div><span className="group-label">CONTACT</span><div className="about-links"><a href={`mailto:${identity.email}`}>Email <span>↗</span></a><a href={identity.linkedin} target="_blank" rel="noreferrer">LinkedIn <span>↗</span></a><a href={identity.medium} target="_blank" rel="noreferrer">Medium <span>↗</span></a><a href={identity.github} target="_blank" rel="noreferrer">GitHub <span>↗</span></a></div></>;
+    if (id === "work") return <><span className="eyebrow">01 / WORK</span><h2>Current roles,<br /><em>clear responsibilities.</em></h2><p className="window-intro">The roles currently listed for this portfolio.</p><JobList /></>;
+    if (id === "github") return <><span className="eyebrow">02 / GITHUB</span><h2>Open source,<br /><em>without the noise.</em></h2><p className="window-intro">Selected repositories and the MasterFabric Academy.</p><GitHubList /></>;
+    if (id === "writing") return <><span className="eyebrow">03 / WRITING</span><h2>Writing and posts,<br /><em>fixed and direct.</em></h2><p className="window-intro">LinkedIn links stay fixed. Medium data is updated by its daily RSS workflow.</p><WritingList /></>;
+    return <AboutContent />;
   };
 
-  const dockItems: { label: string; window?: WindowId }[] = [{ label: "Home" }, { label: "Work", window: "work" }, { label: "GitHub", window: "github" }, { label: "LinkedIn", window: "linkedin" }, { label: "Medium", window: "medium" }, { label: "About", window: "about" }, { label: "Phone", window: "phone" }, { label: "Mail" }, { label: "Terminal", window: "terminal" }, { label: "Glow" }];
-  const nextThemeLabel = `Switch theme: ${nextTheme}`;
-
+  const dockItems: { label: string; icon: LucideIcon; window?: WindowId }[] = [{ label: "Home", icon: House }, { label: "Work", icon: BriefcaseBusiness, window: "work" }, { label: "GitHub", icon: Github, window: "github" }, { label: "Writing", icon: PenLine, window: "writing" }, { label: "About", icon: UserRound, window: "about" }, { label: "Phone", icon: Smartphone, window: "phone" }, { label: "Mail", icon: Mail }, { label: "Terminal", icon: SquareTerminal, window: "terminal" }, { label: "Theme", icon: Sparkles }];
   const homeWidgets = [{ id: "now" as const, content: <RoleWidget /> }, { id: "github" as const, content: <GitHubWidget /> }, { id: "linkedin" as const, content: <StoryWidget label="LATEST ON LINKEDIN" posts={linkedinPosts} source="LinkedIn" /> }, { id: "medium" as const, content: <StoryWidget label="LATEST ON MEDIUM" posts={mediumPosts.slice(0, 3).map((post) => [post.date, post.title, post.url])} source="Medium" /> }];
 
-  return <main className={`desktop theme-${theme} ${cursor.grabbing || draggingWidget ? "is-grabbing" : ""}`}><header className="menu-bar"><strong>{identity.name}</strong><nav><button onClick={() => document.getElementById("home")?.scrollIntoView()}>Home</button><button onClick={() => openWindow("work")}>Work</button><button onClick={() => openWindow("medium")}>Writing</button></nav><span>{time} · {date}</span></header><section className="desktop-scene" id="home"><div className="ambient ambient-one" /><div className="ambient ambient-two" /><div className="home-shell"><div className="home-head"><Clock time={time} date={date} /><div className="hero-copy"><p className="eyebrow">AGENTIC AI ✦ MOBILE ENGINEERING</p><h1>Hello, I&apos;m<br /><em>{identity.name}.</em><br />{identity.title}</h1></div><div className="head-space" /></div><div className="home-widgets" ref={widgetBoardRef} aria-label="Draggable home widgets">{homeWidgets.map(({ id, content }) => { const position = widgetPositions[id]; return <div key={id} className={`home-widget-slot ${draggingWidget === id ? "is-dragging" : ""}`} style={{ "--widget-col": position.column, "--widget-row": position.row } as CSSProperties} onPointerDown={(event) => beginWidgetDrag(event, id)} aria-label={`Move ${id} widget`} role="group">{content}</div>; })}</div><ToolShelf /></div>{openWindows.map((id) => { const offset = windowOffsets[id]; return <div key={id} className={`window-layer ${id === "phone" ? "phone-layer" : ""}`}><div className={`content-window ${id === "terminal" ? "terminal-window" : ""} ${id === "phone" ? "phone-window-shell" : ""}`} style={{ transform: `translate(calc(-50% + ${offset.x}px), ${offset.y}px)`, zIndex: 20 + zOrder.indexOf(id) }} onPointerDown={() => bringToFront(id)}>{id === "phone" ? <div className="phone-backdrop"><button className="phone-close" onClick={() => closeWindow("phone")}>Close ×</button><div className="iphone-frame"><div className="dynamic-island" /><div className="iphone-screen"><MobilePortfolio prefix="phone" /></div></div></div> : <><WindowBar title={windowTitles[id as Exclude<WindowId, "phone">]} close={() => closeWindow(id)} onDrag={(event) => beginDrag(event, id)} />{id === "terminal" ? <TerminalContent /> : <div className="content-window-body">{windowContent(id)}</div>}</>}</div></div>; })}</section><section className="mobile-page"><MobilePortfolio prefix="mobile" /></section><nav className="dock desktop-dock" aria-label="Portfolio dock">{dockItems.map((item, index) => item.label === "Mail" ? <a className="dock-item" data-label={item.label} aria-label={item.label} href={`mailto:${identity.email}`} key={item.label}><span className={`dock-mark dock-mark-${index}`} /></a> : item.label === "Glow" ? <button className="dock-item" data-label={`${item.label} · ${nextTheme}`} aria-label={nextThemeLabel} onClick={() => setTheme(nextTheme)} key={item.label}><span className={`dock-mark dock-mark-${index}`} /></button> : <button className="dock-item" data-label={item.label} aria-label={item.label} onClick={() => item.window ? openWindow(item.window) : undefined} key={item.label}><span className={`dock-mark dock-mark-${index}`} /></button>)} </nav><nav className="mobile-dock"><button onClick={() => document.getElementById("mobile-top")?.scrollIntoView({ behavior: "smooth" })}>Home</button><button onClick={() => document.getElementById("mobile-work")?.scrollIntoView({ behavior: "smooth" })}>Work</button><button onClick={() => document.getElementById("mobile-writing")?.scrollIntoView({ behavior: "smooth" })}>Writing</button><button onClick={() => document.getElementById("mobile-about")?.scrollIntoView({ behavior: "smooth" })}>About</button></nav><div className={`custom-cursor ${cursor.hover ? "is-hover" : ""} ${cursor.grabbing ? "is-grabbing" : ""}`} style={{ left: cursor.x, top: cursor.y }} /></main>;
+  return <main className={`desktop theme-${theme} ${cursor.grabbing || draggingWidget ? "is-grabbing" : ""}`}><header className="menu-bar"><strong>{identity.name}</strong><nav><button onClick={goHome}>Home</button><button onClick={() => openWindow("work")}>Work</button><button onClick={() => openWindow("writing")}>Writing</button></nav><span>{time} · {date}</span></header><section className="desktop-scene" id="home"><div className="ambient ambient-one" /><div className="ambient ambient-two" /><DesktopFolders openWindow={openWindow} /><div className="home-shell"><div className="home-head"><Clock time={time} date={date} /><div className="hero-copy"><p className="eyebrow">AGENTIC AI ✦ MOBILE ENGINEERING</p><h1>{identity.name}<br /><em>{identity.title}</em></h1><p className="hero-line">{identity.homeLine}</p></div><div className="head-space" /></div><div className="home-widgets" ref={widgetBoardRef} aria-label="Draggable home widgets">{homeWidgets.map(({ id, content }) => { const position = widgetPositions[id]; return <div key={id} className={`home-widget-slot ${draggingWidget === id ? "is-dragging" : ""}`} style={{ "--widget-col": position.column, "--widget-row": position.row } as CSSProperties} onPointerDown={(event) => beginWidgetDrag(event, id)} aria-label={`Move ${id} widget`} role="group">{content}</div>; })}</div><ToolShelf /><Marquee /></div>{openWindows.map((id) => { const offset = windowOffsets[id]; return <div key={id} className={`window-layer ${id === "phone" ? "phone-layer" : ""}`} style={{ zIndex: 20 + zOrder.indexOf(id) }}><div className={`content-window ${id === "terminal" ? "terminal-window" : ""} ${id === "phone" ? "phone-window-shell" : ""}`} style={{ transform: `translate(calc(-50% + ${offset.x}px), ${offset.y}px)`, zIndex: 20 + zOrder.indexOf(id) }} onPointerDown={() => bringToFront(id)}>{id === "phone" ? <div className="phone-backdrop"><button className="phone-close" onClick={() => closeWindow("phone")}>Close ×</button><div className="iphone-frame"><div className="dynamic-island" /><div className="iphone-screen"><MobilePortfolio prefix="phone" /></div></div></div> : <><WindowBar title={windowTitles[id]} close={() => closeWindow(id)} onDrag={(event) => beginDrag(event, id)} />{id === "terminal" ? <TerminalContent /> : <div className="content-window-body">{windowContent(id)}</div>}</>}</div></div>; })}</section><section className="mobile-page"><MobilePortfolio prefix="mobile" /></section><nav className="dock desktop-dock" aria-label="Portfolio dock">{dockItems.map((item, index) => { const Icon = item.icon; if (item.label === "Mail") return <a className="dock-item" data-label={item.label} aria-label={item.label} href={`mailto:${identity.email}`} key={item.label}><Icon size={18} strokeWidth={1.7} /></a>; if (item.label === "Theme") return <button className="dock-item" data-label={`${item.label} · ${nextTheme}`} aria-label={`Switch theme to ${nextTheme}`} onClick={() => setTheme(nextTheme)} key={item.label}><Icon size={18} strokeWidth={1.7} /></button>; return <button className="dock-item" data-label={item.label} aria-label={item.label} onClick={() => item.label === "Home" ? goHome() : item.window ? openWindow(item.window) : undefined} key={item.label}><Icon size={18} strokeWidth={1.7} /></button>; })}</nav><nav className="mobile-dock"><button onClick={() => document.getElementById("mobile-top")?.scrollIntoView({ behavior: "smooth" })}>Home</button><button onClick={() => document.getElementById("mobile-work")?.scrollIntoView({ behavior: "smooth" })}>Work</button><button onClick={() => document.getElementById("mobile-writing")?.scrollIntoView({ behavior: "smooth" })}>Writing</button><button onClick={() => document.getElementById("mobile-about")?.scrollIntoView({ behavior: "smooth" })}>About</button></nav><div className={`custom-cursor ${cursor.hover ? "is-hover" : ""} ${cursor.grabbing ? "is-grabbing" : ""} ${cursor.text ? "is-text" : ""}`} style={{ left: cursor.x, top: cursor.y }} /></main>;
 }

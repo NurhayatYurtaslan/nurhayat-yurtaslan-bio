@@ -8,6 +8,7 @@
     "start": "next start -p 3004"
   },
   "dependencies": {
+    "lucide-react": "^0.468.0",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest"
