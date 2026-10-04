@@ -33,3 +33,7 @@ Desktop folders open Work, GitHub, Writing, and About. Multiple windows may rema
 Education and talks are in About only. Personal telephone numbers must not be stored, displayed, or published. The Phone preview and small-screen portfolio have their own scrollable content; the outer page remains locked.
 
 On the desktop home screen, `HomeWidgetGrid` places the Now, GitHub, LinkedIn, and Medium cards in normal CSS Grid flow, without absolute positioning or reserved empty rows. Dragging a card reorders occupied cells; keyboard users can focus a card and use the arrow keys. There are no visible drag handles. The Tools shelf has no enclosing glass card or background, only the consistent white icon tiles. Above 1000px the grid has four columns; at 801–1000px it has two. Cards grow with their content, and the desktop scene can scroll internally on short screens while the outer page and dock stay fixed.
+
+## License
+
+Original project materials are © 2026 Nurhayat Yurtaslan, all rights reserved. Reuse requires prior written permission. Third-party marks and assets belong to their respective owners; see [LICENSE](LICENSE).
