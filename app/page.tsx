@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, type ReactNode, type PointerEvent as ReactPointerEvent } from "react";
-import { BriefcaseBusiness, Folder, Github, House, Mail, PenLine, Smartphone, Sparkles, SquareTerminal, UserRound, type LucideIcon } from "lucide-react";
+import { ArrowUpRight, BriefcaseBusiness, Folder, Github, GraduationCap, House, Mail, PenLine, Smartphone, Sparkles, SquareTerminal, UserRound, type LucideIcon } from "lucide-react";
 import mediumPosts from "../data/medium.json";
 
 type WindowId = "work" | "github" | "writing" | "about" | "terminal" | "phone";
@@ -128,7 +128,7 @@ function JobList() {
 }
 
 function GitHubList() {
-  return <div className="content-list">{githubProjects.map(([name, url], index) => <ExternalRow key={name} index={index + 1} title={name} meta="GitHub repository" url={url} />)}<ExternalRow index={githubProjects.length + 1} title={academy[0]} meta="Academy · no public repository" url={academy[1]} /></div>;
+  return <div className="repo-grid">{githubProjects.map(([name, url]) => <a className="repo-card" href={url} target="_blank" rel="noreferrer" key={name}><span className="repo-mark"><Github size={19} strokeWidth={1.7} /></span><span className="repo-copy"><strong>{name}</strong><small>{url.replace("https://github.com/", "")}</small></span><ArrowUpRight className="repo-arrow" size={17} strokeWidth={1.6} /></a>)}<a className="repo-card repo-academy" href={academy[1]} target="_blank" rel="noreferrer"><span className="repo-mark"><GraduationCap size={19} strokeWidth={1.7} /></span><span className="repo-copy"><strong>{academy[0]}</strong><small>academy-app.masterfabric.co</small></span><ArrowUpRight className="repo-arrow" size={17} strokeWidth={1.6} /></a></div>;
 }
 
 function WritingList() {

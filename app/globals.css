@@ -95,6 +95,16 @@ a { text-decoration: none; }
 .content-row { display: grid; grid-template-columns: 32px minmax(0, 1fr) 22px; gap: 13px; align-items: start; padding: 16px 0; border-bottom: 1px solid var(--line); color: inherit; }
 .content-row:hover h3, .content-row:focus-visible h3 { text-decoration: underline; } .static-row:hover h3 { text-decoration: none; }
 .row-index { padding-top: 2px; color: var(--muted); font: 10px 'DM Mono', monospace; } .row-main h3 { margin: 0 0 6px; font-size: 14px; line-height: 1.25; } .row-main p { max-width: 700px; margin: 0 0 7px; color: var(--muted); font-size: 11px; line-height: 1.45; } .row-main small { color: var(--muted); font: 9px 'DM Mono', monospace; } .row-arrow { color: var(--muted); font-size: 18px; }
+.repo-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 4px 0 24px; }
+.repo-card { display: grid; min-width: 0; min-height: 76px; grid-template-columns: 34px minmax(0, 1fr) 17px; gap: 11px; align-items: center; padding: 13px 14px; border: 1px solid color-mix(in srgb, var(--type) 10%, transparent); border-radius: 12px; background: color-mix(in srgb, var(--surface) 82%, transparent); color: var(--type); transition: border-color .18s, transform .18s, background .18s; }
+.repo-card:hover, .repo-card:focus-visible { transform: translateY(-2px); border-color: color-mix(in srgb, var(--type) 28%, transparent); background: var(--surface); }
+.repo-mark { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--type); }
+.repo-copy { display: grid; min-width: 0; gap: 5px; }
+.repo-copy strong { overflow: hidden; font-size: 12px; line-height: 1.2; text-overflow: ellipsis; white-space: nowrap; }
+.repo-copy small { overflow: hidden; color: var(--muted); font: 8px 'DM Mono', monospace; text-overflow: ellipsis; white-space: nowrap; }
+.repo-arrow { color: var(--muted); transition: transform .18s, color .18s; }
+.repo-card:hover .repo-arrow, .repo-card:focus-visible .repo-arrow { transform: translate(2px, -2px); color: var(--type); }
+.repo-academy { border-style: dashed; }
 .group-label { display: block; margin: 23px 0 10px; }
 .education-row { display: grid; gap: 6px; padding: 14px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); } .education-row strong { font-size: 14px; } .education-row span { color: var(--muted); font: 9px 'DM Mono', monospace; }
 .about-links { display: grid; } .about-links a { display: flex; justify-content: space-between; gap: 16px; padding: 13px 0; border-top: 1px solid var(--line); font-size: 12px; } .about-links a span { color: var(--muted); font: 9px 'DM Mono', monospace; }
