@@ -95,13 +95,14 @@ a { text-decoration: none; }
 .tool-mark img { width: 17px; height: 17px; object-fit: contain; filter: none; }
 
 .desktop-folders { position: absolute; z-index: 3; top: 57px; right: 5.5%; display: grid; grid-template-columns: repeat(4, 68px); gap: 10px; }
-.desktop-folder { --folder-fill: #f1d58d; --folder-stroke: #8d641c; display: grid; justify-items: center; gap: 5px; min-height: 68px; padding: 6px 4px; border: 1px solid color-mix(in srgb, var(--folder-stroke) 24%, transparent); border-radius: 12px; background: color-mix(in srgb, var(--folder-fill) 38%, var(--surface)); color: var(--type); }
+.desktop-folder { --folder-fill: #f1d58d; --folder-stroke: #8d641c; display: grid; justify-items: center; gap: 5px; min-height: 68px; padding: 6px 4px; border: 0; border-radius: 0; background: transparent; color: var(--type); }
 .desktop-folder:nth-child(2) { --folder-fill: #a9c9e8; --folder-stroke: #426d9c; }
 .desktop-folder:nth-child(3) { --folder-fill: #d2b6e3; --folder-stroke: #79528f; }
 .desktop-folder:nth-child(4) { --folder-fill: #a9d0b2; --folder-stroke: #477452; }
 .desktop-folder svg { fill: var(--folder-fill); color: var(--folder-stroke); }
 .desktop-folder span { font: 9px 'DM Mono', monospace; }
-.desktop-folder:hover, .desktop-folder:focus-visible { background: color-mix(in srgb, var(--folder-fill) 52%, var(--surface)); }
+.desktop-folder svg { transition: transform .16s ease, filter .16s ease; }
+.desktop-folder:hover svg, .desktop-folder:focus-visible svg { transform: translateY(-2px); filter: saturate(1.18); }
 
 .window-layer { position: absolute; inset: 0; z-index: 20; pointer-events: none; }
 .content-window { position: absolute; top: 6%; left: 50%; width: min(720px, calc(100vw - 64px)); max-height: calc(100svh - 180px); overflow: hidden; border: 1px solid color-mix(in srgb, var(--type) 12%, transparent); border-radius: 18px; background: var(--window-surface); box-shadow: 0 25px 70px rgba(19, 22, 28, .2); pointer-events: auto; }
