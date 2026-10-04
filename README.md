@@ -38,7 +38,7 @@ On the desktop home screen, `HomeWidgetGrid` places the Now, GitHub, LinkedIn, a
 
 The GitHub window presents repository and Academy links as a compact, two-column card grid, using only the configured names and destinations (no unverified repository metrics).
 
-The desktop home shows one live GitHub activity card, populated from the public GitHub profile and event APIs. No Cursor usage data is requested or shown. The official tool shelf remains a separate vertical list.
+The desktop home shows one live GitHub activity card, populated from the public GitHub profile and event APIs. No Cursor usage data is requested or shown. The official tool shelf uses a compact two-column grid. Home cards share aligned headings and compact padding; window titles are centered independently of their controls.
 
 ## License
 
