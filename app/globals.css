@@ -48,6 +48,8 @@ a { text-decoration: none; }
 .hero-line { max-width: 560px; margin: 10px auto 0; color: var(--muted); font-size: 13px; line-height: 1.35; }
 
 .home-widgets { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; align-items: stretch; }
+.home-widget-slot[data-widget-id="github"] { grid-column: span 2; }
+.github-activity-widget .usage-bars span { max-width: none; }
 .home-widget-slot { display: flex; flex-direction: column; min-width: 0; touch-action: none; cursor: grab; }
 .home-widget-slot:focus-visible { outline: 2px solid var(--type); outline-offset: 3px; border-radius: 18px; }
 .home-widget-slot.is-dragging { z-index: 5; cursor: grabbing; transition: none; }
