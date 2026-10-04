@@ -25,3 +25,5 @@ The Medium workflow reads the public RSS feed once a day and commits only when a
 ## Design
 
 The interface keeps a glass-card desktop metaphor with draggable widgets and windows, three visual themes, a read-only animated terminal, an iPhone-style Phone window, and a separate mobile layout below 800px.
+
+On the desktop home screen, the Now, GitHub, LinkedIn, and Medium widgets can be dragged between grid cells. The layout keeps the Istanbul clock fixed and prevents widgets from covering one another or the dock.
