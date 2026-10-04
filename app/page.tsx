@@ -107,7 +107,7 @@ function StoryWidget({ label, posts, source }: { label: string; posts: string[][
 }
 
 function ToolShelf() {
-  return <section className="tool-shelf" aria-label="Tools"><span className="widget-label">TOOLS</span><div className="tool-grid">{tools.map(([name, slug]) => <div className="tool-item" key={name}><span className="tool-mark"><img src={`https://cdn.simpleicons.org/${slug}`} alt={`${name} official mark`} /></span><small>{name}</small></div>)}</div></section>;
+  return <section className="tool-shelf glass-card" aria-label="Tools"><span className="widget-label">TOOLS</span><div className="tool-grid">{tools.map(([name, slug]) => <div className="tool-item" key={name}><span className="tool-mark"><img src={`https://cdn.simpleicons.org/${slug}`} alt={`${name} official mark`} /></span><small>{name}</small></div>)}</div></section>;
 }
 
 function DesktopFolders({ openWindow }: { openWindow: (id: WindowId) => void }) {
