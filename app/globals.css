@@ -64,6 +64,10 @@ a { text-decoration: none; }
 .widget-links { display: grid; grid-template-columns: 1fr 1fr; gap: 0 13px; margin-top: 11px; border-top: 1px solid var(--line); }
 .widget-links a { display: flex; justify-content: space-between; gap: 5px; min-width: 0; padding: 7px 0; border-bottom: 1px solid var(--line); color: var(--type); font-size: 9px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .widget-links a span { color: var(--muted); }
+.github-widget .widget-links { margin-top: 8px; border: 0; gap: 0 12px; }
+.github-widget .widget-links a { padding: 7px 0; border: 0; font-size: 10px; }
+.github-widget .widget-links a span { opacity: 0; transition: opacity .16s ease; }
+.github-widget .widget-links a:hover span, .github-widget .widget-links a:focus-visible span { opacity: 1; }
 .story-widget { display: grid; align-content: start; gap: 0; }
 .story-line { display: block; min-width: 0; padding: 7px 0 0; margin-top: 7px; border-top: 1px solid var(--line); }
 .story-line strong { display: -webkit-box; overflow: hidden; color: var(--type); font-size: 9px; line-height: 1.25; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
@@ -96,11 +100,14 @@ a { text-decoration: none; }
 .tool-mark { display: grid; width: 27px; height: 27px; place-items: center; border: 1px solid rgba(21, 21, 23, .12); border-radius: 8px; background: #fff; }
 .tool-mark img { width: 17px; height: 17px; object-fit: contain; filter: none; }
 
-.desktop-folders { position: absolute; z-index: 3; top: 57px; right: 5.5%; display: grid; grid-template-columns: repeat(2, 72px); gap: 13px 19px; }
-.desktop-folder { display: grid; justify-items: center; gap: 5px; min-height: 64px; padding: 4px; background: transparent; color: var(--type); }
-.desktop-folder svg { color: var(--muted); }
+.desktop-folders { position: absolute; z-index: 3; top: 57px; right: 5.5%; display: grid; grid-template-columns: repeat(4, 68px); gap: 10px; }
+.desktop-folder { --folder-fill: #f1d58d; --folder-stroke: #8d641c; display: grid; justify-items: center; gap: 5px; min-height: 68px; padding: 6px 4px; border: 1px solid color-mix(in srgb, var(--folder-stroke) 24%, transparent); border-radius: 12px; background: color-mix(in srgb, var(--folder-fill) 38%, var(--surface)); color: var(--type); }
+.desktop-folder:nth-child(2) { --folder-fill: #a9c9e8; --folder-stroke: #426d9c; }
+.desktop-folder:nth-child(3) { --folder-fill: #d2b6e3; --folder-stroke: #79528f; }
+.desktop-folder:nth-child(4) { --folder-fill: #a9d0b2; --folder-stroke: #477452; }
+.desktop-folder svg { fill: var(--folder-fill); color: var(--folder-stroke); }
 .desktop-folder span { font: 9px 'DM Mono', monospace; }
-.desktop-folder:hover svg, .desktop-folder:focus-visible svg { color: var(--type); }
+.desktop-folder:hover, .desktop-folder:focus-visible { background: color-mix(in srgb, var(--folder-fill) 52%, var(--surface)); }
 
 .window-layer { position: absolute; inset: 0; z-index: 20; pointer-events: none; }
 .content-window { position: absolute; top: 6%; left: 50%; width: min(720px, calc(100vw - 64px)); max-height: calc(100svh - 180px); overflow: hidden; border: 1px solid color-mix(in srgb, var(--type) 12%, transparent); border-radius: 18px; background: var(--surface); box-shadow: 0 25px 70px rgba(19, 22, 28, .2); pointer-events: auto; }
@@ -205,7 +212,7 @@ a { text-decoration: none; }
 @media (prefers-reduced-motion: reduce), (hover: none), (pointer: coarse) { body, a, button, .window-bar { cursor: auto !important; } }
 input, textarea, [contenteditable="true"] { cursor: text !important; }
 @media (min-width: 801px) { body { cursor: none; } a, button, .window-bar { cursor: none; } }
-@media (min-width: 801px) and (max-width: 1200px) { .home-head { grid-template-columns: 150px minmax(0, 1fr) 40px; gap: 18px; } .clock-card { width: 150px; } .head-space { width: 40px; } .hero-copy h1 { font-size: 42px; } .home-shell { min-height: auto; gap: 18px; } .home-widget { padding: 12px 11px; } .home-widget h3 { font-size: 14px; } .role-line strong { font-size: 12px; } .role-line span, .widget-links a, .story-line strong { font-size: 8px; } .tool-shelf { width: 178px; } .content-window-body { padding: 30px 34px 38px; } .desktop-folders { right: 4%; transform: scale(.9); transform-origin: top right; } }
+@media (min-width: 801px) and (max-width: 1200px) { .home-head { grid-template-columns: 150px minmax(0, 1fr) 40px; gap: 18px; } .clock-card { width: 150px; } .head-space { width: 40px; } .hero-copy h1 { font-size: 42px; } .home-shell { min-height: auto; gap: 18px; } .home-widget { padding: 12px 11px; } .home-widget h3 { font-size: 14px; } .role-line strong { font-size: 12px; } .role-line span, .widget-links a, .story-line strong { font-size: 8px; } .tool-shelf { width: 178px; } .content-window-body { padding: 30px 34px 38px; } .desktop-folders { top: 44px; right: 2%; grid-template-columns: repeat(4, 48px); gap: 4px; } .desktop-folder { min-height: 50px; gap: 2px; padding: 3px 2px; } .desktop-folder svg { width: 21px; height: 21px; } .desktop-folder span { font-size: 7px; } }
 @media (min-width: 801px) and (max-height: 820px) { .home-head { min-height: 255px; } .home-widget { padding: 10px; } .story-line { padding-top: 5px; margin-top: 5px; } .tool-shelf { padding: 10px 13px; } .tool-grid { gap: 5px; margin-top: 7px; } .tool-item { min-width: 40px; gap: 3px; } .tool-item small { font-size: 7px; } .tool-mark { width: 24px; height: 24px; } .tool-mark img { width: 15px; height: 15px; } }
 @media (max-width: 800px) { .desktop-scene, .desktop-dock { display: none; } .desktop { min-height: 100svh; overflow: hidden; background: #f8f7f4; } .menu-bar { position: fixed; height: 42px; padding: 0 15px; background: rgba(248, 247, 244, .82); } .menu-bar nav, .menu-bar > span { display: none; } .mobile-page { display: block; height: 100svh; overflow-y: auto; } .mobile-portfolio-content { padding-top: 74px; } .mobile-dock { position: fixed; z-index: 35; right: 12px; bottom: 14px; left: 12px; display: grid; grid-template-columns: repeat(4, 1fr); height: 58px; align-items: center; padding: 5px; border: 1px solid rgba(255, 255, 255, .95); border-radius: 17px; background: rgba(255, 255, 255, .9); box-shadow: 0 12px 35px rgba(20, 20, 22, .16); backdrop-filter: blur(16px); } .mobile-dock button { min-height: 44px; background: none; color: #5f6064; font-size: 11px; } .phone-close { top: 12px; right: 12px; } }
 @media (hover: none), (pointer: coarse) { .custom-cursor { display: none !important; } }
