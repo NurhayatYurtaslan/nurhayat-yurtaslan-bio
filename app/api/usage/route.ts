@@ -1,62 +1,40 @@
 import { NextResponse } from "next/server";
 
-export const dynamic = "force-dynamic";
-
-type GitHubEvent = {
-  type?: string;
-  created_at?: string;
-  payload?: { commits?: unknown[]; action?: string };
-};
-
-function utcDay(date: Date) {
-  return date.toISOString().slice(0, 10);
-}
-
-function emptyDays(start: Date, count: number) {
-  return Array.from({ length: count }, (_, index) => {
-    const date = new Date(start);
-    date.setUTCDate(start.getUTCDate() + index);
-    return { date: utcDay(date), commits: 0, pullRequests: 0 };
-  });
-}
-
-async function getGitHubUsage() {
-  const headers = { Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" };
-  const [profileResponse, eventsResponse] = await Promise.all([
-    fetch("https://api.github.com/users/NurhayatYurtaslan", { headers, next: { revalidate: 3600 } }),
-    fetch("https://api.github.com/users/NurhayatYurtaslan/events/public?per_page=100", { headers, next: { revalidate: 3600 } }),
-  ]);
-  if (!profileResponse.ok || !eventsResponse.ok) return null;
-
-  const [profile, events] = await Promise.all([
-    profileResponse.json() as Promise<{ public_repos?: number; followers?: number }>,
-    eventsResponse.json() as Promise<GitHubEvent[]>,
-  ]);
-  const now = new Date();
-  const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-  const start = new Date(today);
-  start.setUTCDate(today.getUTCDate() - 13);
-  const days = emptyDays(start, 14);
-  const dayIndex = new Map(days.map((day, index) => [day.date, index]));
-
-  for (const event of events) {
-    if (!event.created_at) continue;
-    const index = dayIndex.get(utcDay(new Date(event.created_at)));
-    if (index === undefined) continue;
-    if (event.type === "PushEvent") days[index].commits += event.payload?.commits?.length ?? 0;
-    if (event.type === "PullRequestEvent" && event.payload?.action === "opened") days[index].pullRequests += 1;
+async function getContributions() {
+  let breakdown = null;
+  if (process.env.GITHUB_TOKEN) {
+    const response = await fetch("https://api.github.com/graphql", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${process.env.GITHUB_TOKEN}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ query: '{ user(login: "NurhayatYurtaslan") { contributionsCollection { totalCommitContributions totalIssueContributions totalPullRequestContributions totalPullRequestReviewContributions } } }' }),
+      next: { revalidate: 3600 }, signal: AbortSignal.timeout(10000),
+    });
+    if (response.ok) {
+      const result = await response.json();
+      const c = result.data?.user?.contributionsCollection;
+      if (c) breakdown = { commits: c.totalCommitContributions, reviews: c.totalPullRequestReviewContributions, issues: c.totalIssueContributions, pullRequests: c.totalPullRequestContributions };
+    }
   }
-
-  return {
-    publicRepositories: profile.public_repos ?? 0,
-    followers: profile.followers ?? 0,
-    commits: days.reduce((total, day) => total + day.commits, 0),
-    pullRequests: days.reduce((total, day) => total + day.pullRequests, 0),
-    days,
-  };
+  const response = await fetch("https://github.com/users/NurhayatYurtaslan/contributions", { next: { revalidate: 3600 }, signal: AbortSignal.timeout(10000) });
+  if (!response.ok) return null;
+  const html = await response.text();
+  const total = html.match(/([\d,]+)\s+contributions\s+in the last year/);
+  const counts = new Map<string, number>();
+  for (const match of html.matchAll(/<tool-tip\b[^>]*for="([^"]+)"[^>]*>([^<]*)<\/tool-tip>/g)) {
+    const count = match[2].match(/^(\d[\d,]*) contributions? on /);
+    if (count || match[2].startsWith("No contributions")) counts.set(match[1], count ? Number(count[1].replaceAll(",", "")) : 0);
+  }
+  const days: { date: string; count: number; level: number }[] = [];
+  for (const match of html.matchAll(/<td\b[^>]*data-date="([^"]+)"[^>]*id="([^"]+)"[^>]*data-level="([0-4])"[^>]*>/g)) {
+    const count = counts.get(match[2]);
+    if (count !== undefined) days.push({ date: match[1], count, level: Number(match[3]) });
+  }
+  days.sort((a, b) => a.date.localeCompare(b.date));
+  if (!total || days.length < 350) return null;
+  return { total: Number(total[1].replaceAll(",", "")), days, breakdown };
 }
 
 export async function GET() {
-  const github = await getGitHubUsage().catch(() => null);
+  const github = await getContributions().catch(() => null);
   return NextResponse.json({ github }, { headers: { "Cache-Control": "public, s-maxage=900, stale-while-revalidate=1800" } });
 }

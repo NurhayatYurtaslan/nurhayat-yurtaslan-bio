@@ -1,5 +1,11 @@
 [
   {
+    "title": "What a Tool Result Is Allowed to Change",
+    "date": "4 Oct 2026",
+    "url": "https://nurhayatyurtaslan.medium.com/what-a-tool-result-is-allowed-to-change-2faecc5612bb",
+    "summary": ""
+  },
+  {
     "title": "WorkManagerHelper",
     "date": "12 Feb 2025",
     "url": "https://nurhayatyurtaslan.medium.com/workmanagerhelper-tracking-app-state-and-performance-in-swift-mobile-applications-959de9f8129d",
@@ -10,11 +16,5 @@
     "date": "27 Oct 2024",
     "url": "https://nurhayatyurtaslan.medium.com/quicksort-h%C4%B1zl%C4%B1-ve-verimli-bir-s%C4%B1ralama-y%C3%B6ntemi-3416e4bcf2cf",
     "summary": "A practical look at a fast and efficient sorting method."
-  },
-  {
-    "title": "HeapSort",
-    "date": "27 Oct 2024",
-    "url": "https://nurhayatyurtaslan.medium.com/heapsort-verilerinizi-verimli-bir-%C5%9Fekilde-s%C4%B1ralay%C4%B1n-%EF%B8%8F-bed4cc0479a8",
-    "summary": "An explanation of sorting data efficiently with HeapSort."
   }
 ]

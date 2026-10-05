@@ -91,27 +91,42 @@ function WindowBar({ title, close, minimize, toggleFullscreen, isFullscreen, onD
   return <div className="window-bar" onPointerDown={onDrag}><div className="window-controls" onPointerDown={stopDrag}><button className="window-control-close" onClick={close} aria-label={`Close ${title} window`}><span>×</span></button><button className="window-control-minimize" onClick={minimize} aria-label={`Minimize ${title} window`}><Minus size={8} /></button><button className="window-control-fullscreen" onClick={toggleFullscreen} aria-label={`${isFullscreen ? "Exit full screen" : "Enter full screen"} for ${title} window`}>{isFullscreen ? <Minimize2 size={7} /> : <Maximize2 size={7} />}</button></div><span>{title}</span><span className="window-meta" aria-hidden="true" /></div>;
 }
 
-function Clock({ time, date }: { time: string; date: string }) {
-  return <article className="clock-card glass-card"><span className="widget-label">ISTANBUL</span><div className="clock-face"><span className="clock-tick t1" /><span className="clock-tick t2" /><span className="clock-tick t3" /><span className="clock-tick t4" /><span className="clock-hand hour" /><span className="clock-hand minute" /><span className="clock-dot" /></div><div className="clock-caption"><span>LOCAL TIME</span><b>{time}</b></div><div className="clock-date">{date}</div></article>;
+function Clock({ time, date, hourAngle, minuteAngle }: { time: string; date: string; hourAngle: number; minuteAngle: number }) {
+  return <article className="clock-card glass-card"><span className="widget-label">ISTANBUL</span><div className="clock-face"><span className="clock-tick t1" /><span className="clock-tick t2" /><span className="clock-tick t3" /><span className="clock-tick t4" /><span className="clock-hand hour" style={{ transform: `rotate(${hourAngle}deg)` }} /><span className="clock-hand minute" style={{ transform: `rotate(${minuteAngle}deg)` }} /><span className="clock-dot" /></div><div className="clock-caption"><span>LOCAL TIME</span><b>{time}</b></div><div className="clock-date">{date}</div></article>;
 }
 
-type GitHubActivity = { publicRepositories: number; followers: number; commits: number; pullRequests: number; days: { date: string; commits: number; pullRequests: number }[] };
+type GitHubActivity = { total: number; days: { date: string; count: number; level: number }[]; breakdown: { commits: number; reviews: number; issues: number; pullRequests: number } | null };
 
 function GitHubActivityWidget() {
   const [activity, setActivity] = useState<GitHubActivity | null>(null);
-  const [unavailable, setUnavailable] = useState(false);
-
   useEffect(() => {
-    let active = true;
-    fetch("/api/usage", { cache: "no-store" })
-      .then((response) => response.ok ? response.json() as Promise<{ github: GitHubActivity | null }> : Promise.reject(new Error("GitHub activity unavailable")))
-      .then((data) => { if (active) { setActivity(data.github); setUnavailable(!data.github); } })
-      .catch(() => { if (active) setUnavailable(true); });
-    return () => { active = false; };
+    const controller = new AbortController();
+    fetch("/api/usage", { signal: controller.signal }).then(r => r.ok ? r.json() : null).then(data => setActivity(data?.github ?? null)).catch(() => {});
+    return () => controller.abort();
   }, []);
-
-  return <article className="home-widget glass-card github-activity-widget" aria-label="GitHub activity"><div className="usage-card-heading"><span className="widget-label">GITHUB ACTIVITY · 14 DAYS</span><a href={identity.github} target="_blank" rel="noreferrer" aria-label="Open GitHub profile"><Github size={16} strokeWidth={1.7} /></a></div>
-    {activity ? <><div className="usage-stat-row"><div><strong>{activity.commits}</strong><span>public commits</span></div><div><strong>{activity.pullRequests}</strong><span>pull requests</span></div><div><strong>{activity.publicRepositories}</strong><span>public repos</span></div></div><div className="usage-bars" aria-label="Daily GitHub commits for the last 14 days">{activity.days.map((day) => { const count = day.commits * 4 + day.pullRequests * 6; return <span key={day.date} title={`${day.date}: ${day.commits} commits, ${day.pullRequests} pull requests`} style={{ height: `${count ? Math.min(28, count) : 2}px`, opacity: count ? 1 : .28 }} />; })}</div><p className="usage-caption">Public activity only · {activity.followers} followers</p></> : <p className="usage-empty">{unavailable ? "Public GitHub activity is temporarily unavailable." : "Loading public activity…"}</p>}
+  const categories = activity?.breakdown ? [
+    ["Commits", activity.breakdown.commits], ["Code review", activity.breakdown.reviews],
+    ["Issues", activity.breakdown.issues], ["Pull requests", activity.breakdown.pullRequests],
+  ] as const : null;
+  const sum = categories?.reduce((total, [, count]) => total + count, 0) ?? 0;
+  const values = categories?.map(([, count]) => sum ? count / sum : 0) ?? [];
+  const monthStarts = activity?.days.filter((day, index) => index === 0 || day.date.slice(5, 7) !== activity.days[index - 1].date.slice(5, 7)) ?? [];
+  return <article className="home-widget glass-card github-activity-widget" aria-label="GitHub contributions">
+    <div className="usage-card-heading"><span className="widget-label">GITHUB CONTRIBUTIONS</span><a href={identity.github} target="_blank" rel="noreferrer" aria-label="Open GitHub profile"><Github size={16} /></a></div>
+    {activity && <><p className="contribution-total"><strong>{activity.total.toLocaleString("en-US")}</strong> contributions in the last year</p>
+      <div className="contribution-scroll" tabIndex={0} aria-label="Scrollable yearly contribution calendar">
+        <div className="contribution-months">{monthStarts.map(day => <span key={day.date}>{new Date(day.date + "T12:00:00Z").toLocaleString("en-US", { month: "short", timeZone: "UTC" })}</span>)}</div>
+        <div className="contribution-grid">{activity.days.map((day, index) => <span key={day.date} data-level={day.level} style={index === 0 ? { gridRowStart: new Date(day.date + "T12:00:00Z").getUTCDay() + 1 } : undefined} title={day.date + ": " + day.count + " contributions"} aria-label={day.date + ": " + day.count + " contributions"} />)}</div>
+      </div>
+      <div className="contribution-legend"><span>Less</span>{[0,1,2,3,4].map(level => <i key={level} data-level={level} />)}<span>More</span></div>
+      {categories && sum > 0 && <div className="contribution-breakdown">
+        <svg viewBox="0 0 260 170" role="img" aria-label="Contribution activity distribution">
+          <path d="M45 85H215M130 25V145" fill="none" stroke="#39d353" strokeWidth="1.5" />
+          <polygon points={`${130 - values[0] * 85},85 130,${85 - values[1] * 60} ${130 + values[2] * 85},85 130,${85 + values[3] * 60}`} fill="#26a641" fillOpacity=".5" stroke="#39d353" strokeWidth="2" />
+          {categories.map(([label, count], index) => <text key={label} x={[4,130,256,130][index]} y={[78,10,78,160][index]} textAnchor={index === 0 ? "start" : index === 2 ? "end" : "middle"}><tspan>{Math.round(count / sum * 100)}%</tspan><tspan x={[4,130,256,130][index]} dy="12">{label}</tspan></text>)}
+        </svg>
+      </div>}
+    </>}
   </article>;
 }
 
@@ -131,9 +146,11 @@ function DesktopFolders({ openWindow }: { openWindow: (id: WindowId) => void }) 
 function TerminalContent() {
   const fullText = ["> whoami", "Nurhayat Yurtaslan", "> cat now.txt", "Agentic AI Developer | Mobile Engineer", "Ticimax · Mobile Engineer", "MasterFabric · Open-source developer", "Open source, writing, talks."].join("\n");
   const [progress, setProgress] = useState(0);
+  const outputRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { const scroller = outputRef.current?.closest(".terminal-content"); if (scroller) scroller.scrollTop = scroller.scrollHeight; }, [progress]);
   useEffect(() => { if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { setProgress(fullText.length); return; } const timer = window.setInterval(() => setProgress((value) => Math.min(value + 1, fullText.length)), 42); return () => window.clearInterval(timer); }, [fullText.length]);
   const lines = fullText.slice(0, progress).split("\n");
-  return <div className="terminal-lines" aria-label="Read-only terminal output"><div className="terminal-prompt">nurhayat@portfolio:~$</div>{lines.map((line, index) => <div className={line.startsWith("> ") ? "terminal-line" : "terminal-line terminal-output"} key={`${index}-${line}`}>{line}{index === lines.length - 1 && progress < fullText.length && <span className="terminal-cursor" />}</div>)}{progress >= fullText.length && <span className="terminal-cursor" />}</div>;
+  return <div ref={outputRef} className="terminal-lines" aria-label="Read-only terminal output"><div className="terminal-prompt">nurhayat@portfolio:~$</div>{lines.map((line, index) => <div className={line.startsWith("> ") ? "terminal-line" : "terminal-line terminal-output"} key={`${index}-${line}`}>{line}{index === lines.length - 1 && progress < fullText.length && <span className="terminal-cursor" />}</div>)}{progress >= fullText.length && <span className="terminal-cursor" />}</div>;
 }
 
 function JobList() {
@@ -149,7 +166,12 @@ function WritingList() {
 }
 
 function AboutContent() {
-  return <><span className="eyebrow">04 / ABOUT</span><h2>{identity.name}<br /><em>{identity.title}</em></h2><p className="window-intro">{bio}</p><span className="group-label">CURRENT ROLES</span><JobList /><span className="group-label">EDUCATION</span><div className="education-row"><strong>{education.institution}</strong><span>{education.degree} · {education.dates}</span></div><span className="group-label">TALKS</span><div className="content-list">{talks.map(([title, venue], index) => <div className="content-row static-row" key={title}><span className="row-index">{String(index + 1).padStart(2, "0")}</span><div className="row-main"><h3>{title}</h3><small>{venue}</small></div></div>)}</div><span className="group-label">CONTACT</span><div className="about-links"><a href={`mailto:${identity.email}`}>Email <span>↗</span></a><a href={identity.linkedin} target="_blank" rel="noreferrer">LinkedIn <span>↗</span></a><a href={identity.medium} target="_blank" rel="noreferrer">Medium <span>↗</span></a><a href={identity.github} target="_blank" rel="noreferrer">GitHub <span>↗</span></a></div></>;
+  return <div className="about-page"><span className="eyebrow">04 / ABOUT</span><h2>{identity.name}</h2>
+    <div className="about-bio"><p>Nurhayat Yurtaslan is an Agentic AI Developer and Mobile Engineer with a background in Electrical and Electronic Engineering.</p><p>She works on mobile applications and agents, contributes to open source, and shares her work through writing and training.</p></div>
+    <section className="about-group"><h3>Now</h3><JobList /></section>
+    <section className="about-group"><h3>Education</h3><div className="education-row"><strong>{education.institution}</strong><span>{education.degree} · {education.dates}</span></div></section>
+    <section className="about-group"><h3>Contact</h3><div className="about-links"><a href={`mailto:${identity.email}`}>{identity.email}<span>↗</span></a><a href={identity.linkedin} target="_blank" rel="noreferrer">LinkedIn <span>↗</span></a><a href={identity.medium} target="_blank" rel="noreferrer">Medium <span>↗</span></a><a href={identity.github} target="_blank" rel="noreferrer">GitHub <span>↗</span></a></div></section>
+  </div>;
 }
 
 function MobileSectionHeading({ number, title, icon: Icon }: { number: string; title: string; icon: LucideIcon }) {
@@ -200,6 +222,35 @@ function MobilePortfolio({ prefix }: { prefix: string }) {
         <a href={identity.github} target="_blank" rel="noreferrer"><Github size={17} /><span>GitHub</span><ArrowUpRight size={14} /></a>
       </div>
     </section>
+  </div>;
+}
+
+const phonePresets = [
+  { name: "iPhone 16", width: 393, height: 852 },
+  { name: "Compact phone", width: 375, height: 812 },
+  { name: "Wide phone", width: 430, height: 932 },
+] as const;
+
+function PhonePreview({ close }: { close: () => void }) {
+  const [selected, setSelected] = useState(0);
+  const [scale, setScale] = useState(1);
+  const screenRef = useRef<HTMLDivElement>(null);
+  const device = phonePresets[selected];
+  useEffect(() => {
+    const resize = () => setScale(Math.min(1, (window.innerWidth - 48) / (device.width + 28), Math.max(120, window.innerHeight - 110) / (device.height + 28)));
+    resize();
+    window.addEventListener("resize", resize);
+    return () => window.removeEventListener("resize", resize);
+  }, [device]);
+  return <div className="phone-backdrop">
+    <div className="phone-device-controls"><label htmlFor="preview-device">Device</label><select id="preview-device" value={selected} onChange={event => { setSelected(Number(event.target.value)); screenRef.current?.scrollTo({ top: 0 }); }}>{phonePresets.map((preset, index) => <option value={index} key={preset.name}>{preset.name} · {preset.width} × {preset.height}</option>)}</select></div>
+    <button className="phone-close" aria-label="Close phone portfolio" onClick={close}>×</button>
+    <div className="phone-size-holder" style={{ width: (device.width + 28) * scale, height: (device.height + 28) * scale }}>
+      <div className="iphone-frame device-preview-frame" style={{ width: device.width + 28, height: device.height + 28, transform: `scale(${scale})` }}>
+        <div className="dynamic-island" />
+        <div className="phone-screen-clip"><div ref={screenRef} className="iphone-screen" tabIndex={0} aria-label={`Scrollable portfolio, ${device.name}`}><MobilePortfolio prefix="phone" /></div></div>
+      </div>
+    </div>
   </div>;
 }
 
@@ -334,7 +385,8 @@ function PointerLight() {
 
 export default function Home() {
   const [theme, setTheme] = useState<Theme>("neutral");
-  const [time, setTime] = useState("09:41");
+  const [time, setTime] = useState("--:--");
+  const [angles, setAngles] = useState({ hour: -90, minute: -90 });
   const [date, setDate] = useState("");
   const [openWindows, setOpenWindows] = useState<WindowId[]>([]);
   const [minimizedWindows, setMinimizedWindows] = useState<WindowId[]>([]);
@@ -342,15 +394,42 @@ export default function Home() {
   const [zOrder, setZOrder] = useState<WindowId[]>([]);
   const [windowOffsets, setWindowOffsets] = useState<Record<WindowId, Offset>>(windowDefaults);
   const [draggingWidget, setDraggingWidget] = useState<HomeWidgetId | null>(null);
-  const [cursor, setCursor] = useState({ x: 24, y: 24, hover: false, grabbing: false, text: false });
+  const windowDragging = useRef(false);
+  const [cursor, setCursor] = useState({ x: 24, y: 24, hover: false, grabbing: false, text: false, visible: false });
   const themes: Theme[] = ["neutral", "ink", "sand"];
   const nextTheme = useMemo(() => themes[(themes.indexOf(theme) + 1) % themes.length], [theme]);
 
-  useEffect(() => { const update = () => { const now = new Date(); setTime(new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Istanbul" }).format(now)); setDate(new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "2-digit", month: "long", year: "numeric", timeZone: "Europe/Istanbul" }).format(now)); }; update(); const timer = window.setInterval(update, 30_000); return () => window.clearInterval(timer); }, []);
+  useEffect(() => {
+    const formatter = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23", timeZone: "Europe/Istanbul" });
+    const update = () => {
+      const now = new Date();
+      const [hours, minutes, seconds] = formatter.format(now).split(":").map(Number);
+      setTime(formatter.format(now).slice(0, 5));
+      setDate(new Intl.DateTimeFormat("en-GB", { weekday: "long", day: "2-digit", month: "long", year: "numeric", timeZone: "Europe/Istanbul" }).format(now));
+      setAngles({ hour: (hours % 12) * 30 + minutes / 2 + seconds / 120 - 90, minute: minutes * 6 + seconds / 10 - 90 });
+    };
+    update();
+    const timer = window.setInterval(update, 1000);
+    window.addEventListener("focus", update);
+    return () => { window.clearInterval(timer); window.removeEventListener("focus", update); };
+  }, []);
   useEffect(() => { document.body.style.overflow = openWindows.includes("phone") && !minimizedWindows.includes("phone") ? "hidden" : ""; return () => { document.body.style.overflow = ""; }; }, [openWindows, minimizedWindows]);
-  useEffect(() => { const move = (event: PointerEvent) => { const target = event.target as HTMLElement; const textField = target.closest("input,textarea,[contenteditable=true]"); setCursor({ x: event.clientX, y: event.clientY, hover: Boolean(target.closest("a,button,.window-bar")), grabbing: event.buttons > 0, text: Boolean(textField) }); }; window.addEventListener("pointermove", move); return () => window.removeEventListener("pointermove", move); }, []);
+  useEffect(() => {
+    const enabled = window.matchMedia("(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) and (min-width: 801px)");
+    const hide = () => setCursor((current) => ({ ...current, visible: false }));
+    const move = (event: PointerEvent) => {
+      if (!enabled.matches || event.pointerType === "touch") { hide(); return; }
+      const target = event.target as HTMLElement;
+      setCursor({ x: event.clientX, y: event.clientY, hover: Boolean(target.closest("a,button")), grabbing: windowDragging.current, text: Boolean(target.closest("input,textarea,[contenteditable=true]")), visible: true });
+    };
+    window.addEventListener("pointermove", move);
+    document.documentElement.addEventListener("pointerleave", hide);
+    window.addEventListener("blur", hide);
+    enabled.addEventListener("change", hide);
+    return () => { window.removeEventListener("pointermove", move); document.documentElement.removeEventListener("pointerleave", hide); window.removeEventListener("blur", hide); enabled.removeEventListener("change", hide); };
+  }, []);
 
-  const openWindow = (id: WindowId) => { if (id !== "phone") setWindowOffsets((current) => ({ ...current, [id]: snapOffset(current[id]) })); setMinimizedWindows((current) => current.filter((item) => item !== id)); setOpenWindows((current) => current.includes(id) ? current : [...current, id]); setZOrder((current) => [...current.filter((item) => item !== id), id]); };
+  const openWindow = (id: WindowId) => { if (id !== "phone") setWindowOffsets((current) => ({ ...current, [id]: snapOffset(current[id], id) })); setMinimizedWindows((current) => current.filter((item) => item !== id)); setOpenWindows((current) => current.includes(id) ? current : [...current, id]); setZOrder((current) => [...current.filter((item) => item !== id), id]); };
   const closeWindow = (id: WindowId) => { setOpenWindows((current) => current.filter((item) => item !== id)); setZOrder((current) => current.filter((item) => item !== id)); setMinimizedWindows((current) => current.filter((item) => item !== id)); setFullscreenWindow((current) => current === id ? null : current); };
   const minimizeWindow = (id: WindowId) => { setMinimizedWindows((current) => current.includes(id) ? current : [...current, id]); setZOrder((current) => current.filter((item) => item !== id)); setFullscreenWindow((current) => current === id ? null : current); };
   const toggleFullscreen = (id: WindowId) => { setFullscreenWindow((current) => current === id ? null : id); bringToFront(id); };
@@ -364,17 +443,22 @@ export default function Home() {
     });
   };
   const bringToFront = (id: WindowId) => { setMinimizedWindows((current) => current.filter((item) => item !== id)); setZOrder((current) => [...current.filter((item) => item !== id), id]); setOpenWindows((current) => [...current.filter((item) => item !== id), id]); };
-  const snapOffset = (offset: Offset): Offset => {
+  const snapOffset = (offset: Offset, id?: WindowId): Offset => {
     const clock = document.querySelector(".clock-card")?.getBoundingClientRect();
     const safeLeft = (clock?.right ?? 200) + 18;
     const width = Math.min(720, window.innerWidth - safeLeft - 24);
     const left = window.innerWidth / 2 - width / 2;
     const minimumX = safeLeft - left;
     const maximumX = window.innerWidth - 24 - width - left;
-    const maximumY = Math.max(0, window.innerHeight - 140 - Math.min(560, window.innerHeight - 160));
+    const element = id ? document.querySelector<HTMLElement>(`[data-window-id="${id}"]`) : null;
+    const rect = element?.getBoundingClientRect();
+    const baselineTop = rect && id ? rect.top - windowOffsets[id].y : window.innerHeight * .06;
+    const dockTop = document.querySelector(".desktop-dock")?.getBoundingClientRect().top ?? window.innerHeight - 88;
+    const height = rect?.height ?? Math.min(id === "terminal" ? 280 : 560, window.innerHeight - 180);
+    const maximumY = Math.max(0, dockTop - 12 - baselineTop - height);
     return { x: Math.max(minimumX, Math.min(maximumX, Math.round(offset.x / 12) * 12)), y: Math.max(0, Math.min(maximumY, Math.round(offset.y / 12) * 12)) };
   };
-  const beginDrag = (event: ReactPointerEvent<HTMLDivElement>, id: WindowId) => { if ((event.target as HTMLElement).closest("button,a")) return; event.preventDefault(); bringToFront(id); const start = { x: event.clientX, y: event.clientY }; const initial = windowOffsets[id]; const move = (next: PointerEvent) => setWindowOffsets((current) => ({ ...current, [id]: snapOffset({ x: initial.x + next.clientX - start.x, y: initial.y + next.clientY - start.y }) })); const end = () => { setCursor((current) => ({ ...current, grabbing: false })); setWindowOffsets((current) => ({ ...current, [id]: snapOffset(current[id]) })); window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", end); }; window.addEventListener("pointermove", move); window.addEventListener("pointerup", end); };
+  const beginDrag = (event: ReactPointerEvent<HTMLDivElement>, id: WindowId) => { if ((event.target as HTMLElement).closest("button,a")) return; event.preventDefault(); windowDragging.current = true; setCursor((current) => ({ ...current, grabbing: true })); bringToFront(id); const start = { x: event.clientX, y: event.clientY }; const initial = windowOffsets[id]; const move = (next: PointerEvent) => setWindowOffsets((current) => ({ ...current, [id]: snapOffset({ x: initial.x + next.clientX - start.x, y: initial.y + next.clientY - start.y }, id) })); const end = () => { windowDragging.current = false; setCursor((current) => ({ ...current, grabbing: false })); setWindowOffsets((current) => ({ ...current, [id]: snapOffset(current[id], id) })); window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", end); }; window.addEventListener("pointermove", move); window.addEventListener("pointerup", end); };
 
 
   const windowContent = (id: WindowId) => {
@@ -389,5 +473,5 @@ export default function Home() {
   const dockItems: { label: string; icon: LucideIcon; window?: WindowId }[] = [{ label: "Home", icon: House }, { label: "Phone", icon: Smartphone, window: "phone" }, { label: "Mail", icon: Mail }, { label: "Terminal", icon: SquareTerminal, window: "terminal" }, { label: "Theme", icon: Sparkles }];
   const homeWidgets = [{ id: "github" as const, content: <GitHubActivityWidget /> }, { id: "linkedin" as const, content: <StoryWidget label="LATEST ON LINKEDIN" posts={linkedinPosts} source="LinkedIn" /> }, { id: "medium" as const, content: <StoryWidget label="LATEST ON MEDIUM" posts={mediumPosts.slice(0, 3).map((post) => [post.date, post.title, post.url])} source="Medium" /> }];
 
-  return <main className={`desktop theme-${theme} ${cursor.grabbing || draggingWidget ? "is-grabbing" : ""}`}><header className="menu-bar"><strong>{identity.name}</strong><nav><button onClick={goHome}>Home</button><button onClick={() => openWindow("work")}>Work</button><button onClick={() => openWindow("writing")}>Writing</button></nav><span>{time} · {date}</span></header><section className="desktop-scene" id="home"><PointerLight /><div className="ambient ambient-one" /><div className="ambient ambient-two" /><DesktopFolders openWindow={openWindow} /><div className="home-shell"><div className="home-head"><Clock time={time} date={date} /><div className="hero-copy"><p className="eyebrow">AGENTIC AI ✦ MOBILE ENGINEERING</p><h1>{identity.name}<br /><em>{identity.title}</em></h1><p className="hero-line">{identity.homeLine}</p></div><div className="head-space" /></div><HomeWidgetGrid widgets={homeWidgets} onDraggingChange={(id) => { setDraggingWidget(id); if (!id) setCursor((current) => ({ ...current, grabbing: false })); }} /><ToolShelf /></div>{openWindows.filter((id) => !minimizedWindows.includes(id)).map((id) => { const offset = windowOffsets[id]; const isFullscreen = fullscreenWindow === id; return <div key={id} className={`window-layer ${id === "phone" ? "phone-layer" : ""}`} style={{ zIndex: 20 + zOrder.indexOf(id) }}><div className={`content-window ${id === "terminal" ? "terminal-window" : ""} ${id === "phone" ? "phone-window-shell" : ""} ${isFullscreen ? "is-fullscreen" : ""}`} style={{ transform: `translate(calc(-50% + ${offset.x}px), ${offset.y}px)`, zIndex: 20 + zOrder.indexOf(id) }} onPointerDown={() => bringToFront(id)}>{id === "phone" ? <div className="phone-backdrop"><button className="phone-close" aria-label="Close phone portfolio" onClick={() => closeWindow("phone")}>×</button><div className="iphone-frame"><div className="dynamic-island" /><div className="iphone-screen" tabIndex={0} aria-label="Scrollable phone portfolio"><MobilePortfolio prefix="phone" /></div></div></div> : <><WindowBar title={windowTitles[id]} close={() => closeWindow(id)} minimize={() => minimizeWindow(id)} toggleFullscreen={() => toggleFullscreen(id)} isFullscreen={isFullscreen} onDrag={(event) => beginDrag(event, id)} /><div className={id === "terminal" ? "terminal-content" : "content-window-body"}>{windowContent(id)}</div></>}</div></div>; })}</section><section className="mobile-page"><MobilePortfolio prefix="mobile" /></section><nav className="dock desktop-dock" aria-label="Portfolio dock">{dockItems.map((item, index) => { const Icon = item.icon; if (item.label === "Home") return <button className="dock-item dock-home" data-label="Home" aria-label="Show desktop and return to top" aria-current={openWindows.every((id) => minimizedWindows.includes(id)) ? "page" : undefined} onClick={goHome} key={item.label}><Icon size={18} strokeWidth={1.7} /></button>; if (item.label === "Mail") return <a className="dock-item" data-label={item.label} aria-label={item.label} href={`mailto:${identity.email}`} key={item.label}><Icon size={18} strokeWidth={1.7} /></a>; if (item.label === "Theme") return <button className="dock-item" data-label={`${item.label} · ${nextTheme}`} aria-label={`Switch theme to ${nextTheme}`} onClick={() => setTheme(nextTheme)} key={item.label}><Icon size={18} strokeWidth={1.7} /></button>; return <button className="dock-item" data-label={item.label} aria-label={item.label} onClick={() => item.label === "Home" ? goHome() : item.window ? openWindow(item.window) : undefined} key={item.label}><Icon size={18} strokeWidth={1.7} /></button>; })}</nav>{minimizedWindows.length > 0 && <nav className="minimized-windows" aria-label="Minimized windows">{minimizedWindows.map((id) => <button key={id} onClick={() => bringToFront(id)}><span aria-hidden="true">▱</span>{windowTitles[id as Exclude<WindowId, "phone">] ?? "Phone"}</button>)}</nav>}<nav className="mobile-dock"><button onClick={() => document.getElementById("mobile-top")?.scrollIntoView({ behavior: "smooth" })}>Home</button><button onClick={() => document.getElementById("mobile-work")?.scrollIntoView({ behavior: "smooth" })}>Work</button><button onClick={() => document.getElementById("mobile-writing")?.scrollIntoView({ behavior: "smooth" })}>Writing</button><button onClick={() => document.getElementById("mobile-about")?.scrollIntoView({ behavior: "smooth" })}>About</button></nav><div className={`custom-cursor ${cursor.hover ? "is-hover" : ""} ${cursor.grabbing ? "is-grabbing" : ""} ${cursor.text ? "is-text" : ""}`} style={{ left: cursor.x, top: cursor.y }} /></main>;
+  return <main className={`desktop theme-${theme} ${cursor.visible && !cursor.text && !cursor.grabbing && !draggingWidget ? "cursor-ring-on" : ""} ${cursor.grabbing || draggingWidget ? "is-grabbing" : ""}`}><section className="desktop-scene" id="home"><PointerLight /><div className="ambient ambient-one" /><div className="ambient ambient-two" /><DesktopFolders openWindow={openWindow} /><div className="home-shell"><div className="home-head"><Clock time={time} date={date} hourAngle={angles.hour} minuteAngle={angles.minute} /><div className="hero-copy"><p className="eyebrow">AGENTIC AI ✦ MOBILE ENGINEERING</p><h1>{identity.name}<br /><em>{identity.title}</em></h1><p className="hero-line">{identity.homeLine}</p></div><div className="head-space" /></div><HomeWidgetGrid widgets={homeWidgets} onDraggingChange={(id) => { setDraggingWidget(id); if (!id) setCursor((current) => ({ ...current, grabbing: false })); }} /><ToolShelf /></div>{openWindows.filter((id) => !minimizedWindows.includes(id)).map((id) => { const offset = windowOffsets[id]; const isFullscreen = fullscreenWindow === id; return <div key={id} className={`window-layer ${id === "phone" ? "phone-layer" : ""}`} style={{ zIndex: 20 + zOrder.indexOf(id) }}><div data-window-id={id} className={`content-window ${id === "terminal" ? "terminal-window" : ""} ${id === "phone" ? "phone-window-shell" : ""} ${isFullscreen ? "is-fullscreen" : ""}`} style={{ transform: `translate(calc(-50% + ${offset.x}px), ${offset.y}px)`, zIndex: 20 + zOrder.indexOf(id) }} onPointerDown={() => bringToFront(id)}>{id === "phone" ? <PhonePreview close={() => closeWindow("phone")} /> : <><WindowBar title={windowTitles[id]} close={() => closeWindow(id)} minimize={() => minimizeWindow(id)} toggleFullscreen={() => toggleFullscreen(id)} isFullscreen={isFullscreen} onDrag={(event) => beginDrag(event, id)} /><div className={id === "terminal" ? "terminal-content" : "content-window-body"}>{windowContent(id)}</div></>}</div></div>; })}</section><section className="mobile-page"><MobilePortfolio prefix="mobile" /></section><nav className="dock desktop-dock" aria-label="Portfolio dock">{dockItems.map((item, index) => { const Icon = item.icon; if (item.label === "Home") return <button className="dock-item dock-home" data-label="Home" aria-label="Show desktop and return to top" aria-current={openWindows.every((id) => minimizedWindows.includes(id)) ? "page" : undefined} onClick={goHome} key={item.label}><Icon size={18} strokeWidth={1.7} /></button>; if (item.label === "Mail") return <a className="dock-item" data-label={item.label} aria-label={item.label} href={`mailto:${identity.email}`} key={item.label}><Icon size={18} strokeWidth={1.7} /></a>; if (item.label === "Theme") return <button className="dock-item" data-label={`${item.label} · ${nextTheme}`} aria-label={`Switch theme to ${nextTheme}`} onClick={() => setTheme(nextTheme)} key={item.label}><Icon size={18} strokeWidth={1.7} /></button>; return <button className="dock-item" data-label={item.label} aria-label={item.label} onClick={() => item.label === "Home" ? goHome() : item.window ? openWindow(item.window) : undefined} key={item.label}><Icon size={18} strokeWidth={1.7} /></button>; })}</nav>{minimizedWindows.length > 0 && <nav className="minimized-windows" aria-label="Minimized windows">{minimizedWindows.map((id) => <button key={id} onClick={() => bringToFront(id)}><span aria-hidden="true">▱</span>{windowTitles[id as Exclude<WindowId, "phone">] ?? "Phone"}</button>)}</nav>}<nav className="mobile-dock"><button onClick={() => document.getElementById("mobile-top")?.scrollIntoView({ behavior: "smooth" })}>Home</button><button onClick={() => document.getElementById("mobile-work")?.scrollIntoView({ behavior: "smooth" })}>Work</button><button onClick={() => document.getElementById("mobile-writing")?.scrollIntoView({ behavior: "smooth" })}>Writing</button><button onClick={() => document.getElementById("mobile-about")?.scrollIntoView({ behavior: "smooth" })}>About</button></nav><div className={`custom-cursor ${cursor.visible ? "is-visible" : ""} ${cursor.hover ? "is-hover" : ""} ${cursor.grabbing ? "is-grabbing" : ""} ${cursor.text ? "is-text" : ""}`} style={{ left: cursor.x, top: cursor.y }} /></main>;
 }
