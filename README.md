@@ -24,6 +24,12 @@ The Medium workflow reads the public RSS feed once a day and commits only when a
 
 ## Design
 
+The framed phone has its own screen-based experience, independent of desktop components. Home contains only the name, title, and live Istanbul time; swiping or scrolling up reaches a second, scroll-snapped Bio screen. Four persistent 44px-minimum navigation targets open separate Work (names), Writing (titles), About (two paragraphs), and Contact screens. Back returns to Home. No desktop cards, folders, contribution graph, or tool marks appear inside the frame.
+
+The desktop retains its live left-hand Istanbul clock, centered identity, right-hand folders, and cards below on a shared grid with 32px side padding. A single small signature star belongs to Home or the frontmost open window. Background drift and pointer light are disabled; there is no particle field or cursor trail.
+
+Work opens Selected Work: eight full-width numbered project entries with verified descriptions and known stacks only. Writing opens Thought Stream, ordered LinkedIn first and then the three newest stored Medium entries. Tool labels are grouped into Mobile, Systems, and Build without recoloring or replacing the eleven official marks. About includes editorial current roles, a standalone bachelor's Education block, four contact links, and a compact live Istanbul time.
+
 The interface keeps a glass-card desktop metaphor with draggable widgets and windows, three visual themes, a read-only animated terminal, an iPhone-style Phone window, and a separate mobile layout below 800px.
 
 Neutral, ink, and sand share theme-aware surface, border, and text tokens. Ink windows use a solid reading surface with translucent chrome to prevent background text from showing through. The dock, Phone content, and mobile navigation follow the active theme. Reduced motion disables background drift and the custom cursor.

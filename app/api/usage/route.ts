@@ -31,7 +31,7 @@ async function getContributions() {
   }
   days.sort((a, b) => a.date.localeCompare(b.date));
   if (!total || days.length < 350) return null;
-  return { total: Number(total[1].replaceAll(",", "")), days, breakdown };
+  return { total: Number(total[1].replaceAll(",", "")), days, breakdown, syncedAt: new Date().toISOString() };
 }
 
 export async function GET() {
