@@ -1,20 +1,482 @@
 [
   {
+    "title": "Qué puede cambiar el resultado de una herramienta",
+    "url": "https://nurhayatyurtaslan.medium.com/qu%C3%A9-puede-cambiar-el-resultado-de-una-herramienta-f89e8f9d6bef",
+    "date": "05 Oct 2026",
+    "summary": ""
+  },
+  {
     "title": "What a Tool Result Is Allowed to Change",
+    "url": "https://nurhayatyurtaslan.medium.com/what-a-tool-result-is-allowed-to-change-2faecc5612bb",
     "date": "04 Oct 2026",
-    "url": "https://nurhayatyurtaslan.medium.com/what-a-tool-result-is-allowed-to-change-2faecc5612bb?source=rss-c026048cd122------2",
     "summary": ""
   },
   {
     "title": "WorkManagerHelper: Tracking App State and Performance in Swift Mobile Applications",
+    "url": "https://nurhayatyurtaslan.medium.com/workmanagerhelper-tracking-app-state-and-performance-in-swift-mobile-applications-959de9f8129d",
     "date": "12 Feb 2025",
-    "url": "https://nurhayatyurtaslan.medium.com/workmanagerhelper-tracking-app-state-and-performance-in-swift-mobile-applications-959de9f8129d?source=rss-c026048cd122------2",
     "summary": ""
   },
   {
-    "title": "QuickSort : Hızlı ve Verimli Bir Sıralama Yöntemi",
+    "title": "QuickSort : Hızlı ve Verimli Bir Sıralama Yöntemi",
+    "url": "https://nurhayatyurtaslan.medium.com/quicksort-h%C4%B1zl%C4%B1-ve-verimli-bir-s%C4%B1ralama-y%C3%B6ntemi-3416e4bcf2cf",
     "date": "27 Oct 2024",
-    "url": "https://nurhayatyurtaslan.medium.com/quicksort-h%C4%B1zl%C4%B1-ve-verimli-bir-s%C4%B1ralama-y%C3%B6ntemi-3416e4bcf2cf?source=rss-c026048cd122------2",
+    "summary": ""
+  },
+  {
+    "title": "HeapSort: Verilerinizi Verimli Bir Şekilde Sıralayın! ️✨",
+    "url": "https://nurhayatyurtaslan.medium.com/heapsort-verilerinizi-verimli-bir-%C5%9Fekilde-s%C4%B1ralay%C4%B1n-%EF%B8%8F-bed4cc0479a8",
+    "date": "27 Oct 2024",
+    "summary": ""
+  },
+  {
+    "title": "Radix Sort: Dart ile Sayıların Hızlı ve Etkili Sıralanması",
+    "url": "https://nurhayatyurtaslan.medium.com/radix-sort-dart-ile-say%C4%B1lar%C4%B1n-h%C4%B1zl%C4%B1-ve-etkili-s%C4%B1ralanmas%C4%B1-b0db47f71c5f",
+    "date": "04 Oct 2024",
+    "summary": ""
+  },
+  {
+    "title": "Algoritma Paradigmaları: Temelleri ve Uygulama Alanları",
+    "url": "https://nurhayatyurtaslan.medium.com/algoritma-paradigmalar%C4%B1-temelleri-ve-uygulama-alanlar%C4%B1-728f323a0e02",
+    "date": "02 Oct 2024",
+    "summary": ""
+  },
+  {
+    "title": "Merge Sort: Dart ile Birleştirme Sıralama Algoritması",
+    "url": "https://nurhayatyurtaslan.medium.com/merge-sort-dart-ile-birle%C5%9Ftirme-s%C4%B1ralama-algoritmas%C4%B1-8469453f7f7f",
+    "date": "02 Oct 2024",
+    "summary": ""
+  },
+  {
+    "title": "O(n²) Sıralama Algoritmaları: Örnek Senaryo ve Çözümler",
+    "url": "https://nurhayatyurtaslan.medium.com/o-n%C2%B2-s%C4%B1ralama-algoritmalar%C4%B1-%C3%B6rnek-senaryo-ve-%C3%A7%C3%B6z%C3%BCmler-720a54600fb9",
+    "date": "02 Oct 2024",
+    "summary": ""
+  },
+  {
+    "title": "GitHub: Yazılım Geliştiriciler İçin Temel Kavramlar",
+    "url": "https://nurhayatyurtaslan.medium.com/github-yaz%C4%B1l%C4%B1m-geli%C5%9Ftiriciler-i%CC%87%C3%A7in-temel-kavramlar-a881b7163d15",
+    "date": "01 Oct 2024",
+    "summary": ""
+  },
+  {
+    "title": "100 days of code python developer challenge 2023 day 3",
+    "url": "https://nurhayatyurtaslan.medium.com/100-days-of-code-python-developer-challenge-2023-day-3-d51fd8f86178",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "100 days of code python developer challenge 2023 day 2",
+    "url": "https://nurhayatyurtaslan.medium.com/100-days-of-code-python-developer-challenge-2023-day-2-6919d3a2597e",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "100 days of code python developer challenge 2023 day 1",
+    "url": "https://nurhayatyurtaslan.medium.com/100-days-of-code-python-developer-challenge-2023-day-1-9a4e27622fa7",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "100 days of code python developer challenge 2023 day 9",
+    "url": "https://nurhayatyurtaslan.medium.com/100-days-of-code-python-developer-challenge-2023-day-9-bc681912b030",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "100 days of code python developer challenge 2023 day 8",
+    "url": "https://nurhayatyurtaslan.medium.com/100-days-of-code-python-developer-challenge-2023-day-8-65ad882c536e",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "100 days of code python developer challenge 2023 day 7",
+    "url": "https://nurhayatyurtaslan.medium.com/100-days-of-code-python-developer-challenge-2023-day-7-3f2df356ee71",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "100 days of code python developer challenge 2023 day 6",
+    "url": "https://nurhayatyurtaslan.medium.com/100-days-of-code-python-developer-challenge-2023-day-6-8811c467ac5d",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "100 days of code python developer challenge 2023 day 5",
+    "url": "https://nurhayatyurtaslan.medium.com/100-days-of-code-python-developer-challenge-2023-day-5-6e72c213cb19",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "o n² sıralama algoritmaları örnek senaryolar ve çözümler dart ile o n² sıralama algoritmaları",
+    "url": "https://nurhayatyurtaslan.medium.com/o-n%C2%B2-s%C4%B1ralama-algoritmalar%C4%B1-%C3%B6rnek-senaryolar-ve-%C3%A7%C3%B6z%C3%BCmler-dart-ile-o-n%C2%B2-s%C4%B1ralama-algoritmalar%C4%B1-122edb6fe7d4",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "flutterda immutable kullanımı değiştirilemez nesneler",
+    "url": "https://nurhayatyurtaslan.medium.com/flutterda-immutable-kullan%C4%B1m%C4%B1-de%C4%9Fi%C5%9Ftirilemez-nesneler-da3371ba20e3",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "sakın kitap okuma",
+    "url": "https://nurhayatyurtaslan.medium.com/sak%C4%B1n-kitap-okuma-ca385ddc6856",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "kapıların dışı böyleyse i̇çerisi nasıldır",
+    "url": "https://nurhayatyurtaslan.medium.com/kap%C4%B1lar%C4%B1n-d%C4%B1%C5%9F%C4%B1-b%C3%B6yleyse-i%CC%87%C3%A7erisi-nas%C4%B1ld%C4%B1r-1e39b6a9602d",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "perfect",
+    "url": "https://nurhayatyurtaslan.medium.com/perfect-33dca99c716e",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "excelde i̇ki sütun nasıl karşılaştırılır eşleşmeler ve farklılıklar için",
+    "url": "https://nurhayatyurtaslan.medium.com/excelde-i%CC%87ki-s%C3%BCtun-nas%C4%B1l-kar%C5%9F%C4%B1la%C5%9Ft%C4%B1r%C4%B1l%C4%B1r-e%C5%9Fle%C5%9Fmeler-ve-farkl%C4%B1l%C4%B1klar-i%C3%A7in-55d3767a8a0d",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "excelde boş ve dolu hücreleri nasıl saydırız",
+    "url": "https://nurhayatyurtaslan.medium.com/excelde-bo%C5%9F-ve-dolu-h%C3%BCcreleri-nas%C4%B1l-sayd%C4%B1r%C4%B1z-f2b67b956e7b",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "excelde hücrelerdeki karakterleri sayma i̇şlemi nasıl yapılır",
+    "url": "https://nurhayatyurtaslan.medium.com/excelde-h%C3%BCcrelerdeki-karakterleri-sayma-i%CC%87%C5%9Flemi-nas%C4%B1l-yap%C4%B1l%C4%B1r-e59b4c2e828e",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "çokeğersay formülü nedir ve nasıl kullanılır çokeğersay örnek kullanım",
+    "url": "https://nurhayatyurtaslan.medium.com/%C3%A7oke%C4%9Fersay-form%C3%BCl%C3%BC-nedir-ve-nas%C4%B1l-kullan%C4%B1l%C4%B1r-%C3%A7oke%C4%9Fersay-%C3%B6rnek-kullan%C4%B1m-b3520effdca5",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "eğersay formülü nedir ve nasıl kullanılır eğersay formülü örnekleri",
+    "url": "https://nurhayatyurtaslan.medium.com/e%C4%9Fersay-form%C3%BCl%C3%BC-nedir-ve-nas%C4%B1l-kullan%C4%B1l%C4%B1r-e%C4%9Fersay-form%C3%BCl%C3%BC-%C3%B6rnekleri-2c0050981cd4",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "ibm watson ile veri bilimi i̇şletmeler i̇çin i̇leri düzey veri analizi",
+    "url": "https://nurhayatyurtaslan.medium.com/ibm-watson-ile-veri-bilimi-i%CC%87%C5%9Fletmeler-i%CC%87%C3%A7in-i%CC%87leri-d%C3%BCzey-veri-analizi-54ba1126d3ad",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "ibm watson studio yapay zeka ve veri bilimi çözümleri için güçlü bir araç",
+    "url": "https://nurhayatyurtaslan.medium.com/ibm-watson-studio-yapay-zeka-ve-veri-bilimi-%C3%A7%C3%B6z%C3%BCmleri-i%C3%A7in-g%C3%BC%C3%A7l%C3%BC-bir-ara%C3%A7-f160a4072135",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "google analyticsin dijital dönüşümdeki rolü",
+    "url": "https://nurhayatyurtaslan.medium.com/google-analyticsin-dijital-d%C3%B6n%C3%BC%C5%9F%C3%BCmdeki-rol%C3%BC-447c0ccda444",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "tablo dijital dönüşüm araçları hakkında bilgi ve avantajları",
+    "url": "https://nurhayatyurtaslan.medium.com/tablo-dijital-d%C3%B6n%C3%BC%C5%9F%C3%BCm-ara%C3%A7lar%C4%B1-hakk%C4%B1nda-bilgi-ve-avantajlar%C4%B1-dc99ca0ca422",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "tableau dijital dönüşüm aracı ile veri görselleştirme",
+    "url": "https://nurhayatyurtaslan.medium.com/tableau-dijital-d%C3%B6n%C3%BC%C5%9F%C3%BCm-arac%C4%B1-ile-veri-g%C3%B6rselle%C5%9Ftirme-b2af9d5aaf73",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "veri analitiği araçları dijital dönüşümde i̇şletmeleri nasıl destekliyor",
+    "url": "https://nurhayatyurtaslan.medium.com/veri-analiti%C4%9Fi-ara%C3%A7lar%C4%B1-dijital-d%C3%B6n%C3%BC%C5%9F%C3%BCmde-i%CC%87%C5%9Fletmeleri-nas%C4%B1l-destekliyor-3ba975191365",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "gpt 4 the next generation of ai language models",
+    "url": "https://nurhayatyurtaslan.medium.com/gpt-4-the-next-generation-of-ai-language-models-6aac64808262",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "datanismint an overview of the advanced marketing analytics tool",
+    "url": "https://nurhayatyurtaslan.medium.com/datanismint-an-overview-of-the-advanced-marketing-analytics-tool-b081ad414815",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "power bi dijital dönüşüm araçlarının avantaj ve dezavantajları",
+    "url": "https://nurhayatyurtaslan.medium.com/power-bi-dijital-d%C3%B6n%C3%BC%C5%9F%C3%BCm-ara%C3%A7lar%C4%B1n%C4%B1n-avantaj-ve-dezavantajlar%C4%B1-a5aec33df534",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "dijital dönüşüm araçları",
+    "url": "https://nurhayatyurtaslan.medium.com/dijital-d%C3%B6n%C3%BC%C5%9F%C3%BCm-ara%C3%A7lar%C4%B1-24729ffd8e33",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "dijital dönüşümde kullanılan veri analitiği araçları ve özellikleri",
+    "url": "https://nurhayatyurtaslan.medium.com/dijital-d%C3%B6n%C3%BC%C5%9F%C3%BCmde-kullan%C4%B1lan-veri-analiti%C4%9Fi-ara%C3%A7lar%C4%B1-ve-%C3%B6zellikleri-5c82ca781772",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "solvoyo a comprehensive supply chain planning platform",
+    "url": "https://nurhayatyurtaslan.medium.com/solvoyo-a-comprehensive-supply-chain-planning-platform-95a37baa07d2",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "makine öğrenmesi nedir",
+    "url": "https://nurhayatyurtaslan.medium.com/makine-%C3%B6%C4%9Frenmesi-nedir-eefaca5ef008",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "denetimli makine öğrenmesi nedir",
+    "url": "https://nurhayatyurtaslan.medium.com/denetimli-makine-%C3%B6%C4%9Frenmesi-nedir-240ec377e6e8",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "lineer regresyon nedir",
+    "url": "https://nurhayatyurtaslan.medium.com/lineer-regresyon-nedir-dcdee69bf00f",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "what is sap basis how to optimize your businesss it infrastructure",
+    "url": "https://nurhayatyurtaslan.medium.com/what-is-sap-basis-how-to-optimize-your-businesss-it-infrastructure-bf218977a7dd",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "sap basis nedir i̇şletmenizin it altyapısını nasıl optimize edebilirsiniz",
+    "url": "https://nurhayatyurtaslan.medium.com/sap-basis-nedir-i%CC%87%C5%9Fletmenizin-it-altyap%C4%B1s%C4%B1n%C4%B1-nas%C4%B1l-optimize-edebilirsiniz-28e6a84882f6",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "sap sistem mimarisine genel bakış",
+    "url": "https://nurhayatyurtaslan.medium.com/sap-sistem-mimarisine-genel-bak%C4%B1%C5%9F-b9a0fc050de1",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "classification regression",
+    "url": "https://nurhayatyurtaslan.medium.com/classification-regression-22b6d96811f8",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "named entity recognition what is it and how does it work",
+    "url": "https://nurhayatyurtaslan.medium.com/named-entity-recognition-what-is-it-and-how-does-it-work-fa888f3ae8fd",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "sentiment analysis için kullanılan yöntemler",
+    "url": "https://nurhayatyurtaslan.medium.com/sentiment-analysis-i%C3%A7in-kullan%C4%B1lan-y%C3%B6ntemler-7d7b31ee1759",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "kurallara dayalı sentiment analysis yaklaşımı",
+    "url": "https://nurhayatyurtaslan.medium.com/kurallara-dayal%C4%B1-sentiment-analysis-yakla%C5%9F%C4%B1m%C4%B1-22c73e4cc3b6",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "sentiment analysis nedir metinlerdeki duygusal anlamı kavramak",
+    "url": "https://nurhayatyurtaslan.medium.com/sentiment-analysis-nedir-metinlerdeki-duygusal-anlam%C4%B1-kavramak-ad23c190e75e",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "bag of words model doğal dil i̇şlemede en basit yöntem",
+    "url": "https://nurhayatyurtaslan.medium.com/bag-of-words-model-do%C4%9Fal-dil-i%CC%87%C5%9Flemede-en-basit-y%C3%B6ntem-862c73de33ab",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "stemming ve lemmatization nedir neden doğal dil i̇şlemede önemlidirler",
+    "url": "https://nurhayatyurtaslan.medium.com/stemming-ve-lemmatization-nedir-neden-do%C4%9Fal-dil-i%CC%87%C5%9Flemede-%C3%B6nemlidirler-1670c37788ce",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "lemmatization ile girilen kelimenin türünü ve kökünü bulmak",
+    "url": "https://nurhayatyurtaslan.medium.com/lemmatization-ile-girilen-kelimenin-t%C3%BCr%C3%BCn%C3%BC-ve-k%C3%B6k%C3%BCn%C3%BC-bulmak-d62ba0f8fe59",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "tokenization doğal dil i̇şleme nlp",
+    "url": "https://nurhayatyurtaslan.medium.com/tokenization-do%C4%9Fal-dil-i%CC%87%C5%9Fleme-nlp-2444de8ca7fe",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "i̇nternet ve finans teknolojilerinde yeni çağ blockzincir ve web 3 0",
+    "url": "https://nurhayatyurtaslan.medium.com/i%CC%87nternet-ve-finans-teknolojilerinde-yeni-%C3%A7a%C4%9F-blockzincir-ve-web-3-0-5d7267ffc387",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "merkeziyetsiz finans defi dijital varlıklar ve uygulama örnekleri",
+    "url": "https://nurhayatyurtaslan.medium.com/merkeziyetsiz-finans-defi-dijital-varl%C4%B1klar-ve-uygulama-%C3%B6rnekleri-9b308c27d963",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "blokzincirinin tarihçesi temel kavramları ve çalışma prensipleri",
+    "url": "https://nurhayatyurtaslan.medium.com/blokzincirinin-tarih%C3%A7esi-temel-kavramlar%C4%B1-ve-%C3%A7al%C4%B1%C5%9Fma-prensipleri-505e72428d55",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "mühendislik sektöründe blockchain kullanım alanları ve uygulama örnekleri",
+    "url": "https://nurhayatyurtaslan.medium.com/m%C3%BChendislik-sekt%C3%B6r%C3%BCnde-blockchain-kullan%C4%B1m-alanlar%C4%B1-ve-uygulama-%C3%B6rnekleri-87e5ff01371a",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "mastering count operations in dax a comprehensive guide",
+    "url": "https://nurhayatyurtaslan.medium.com/mastering-count-operations-in-dax-a-comprehensive-guide-bfcd898ee310",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "differences between measure and calculated column in power bi",
+    "url": "https://nurhayatyurtaslan.medium.com/differences-between-measure-and-calculated-column-in-power-bi-d9bfb789fc34",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "unraveling the power of dax logical functions for data analysis",
+    "url": "https://nurhayatyurtaslan.medium.com/unraveling-the-power-of-dax-logical-functions-for-data-analysis-dd3dddc960ad",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "unraveling the magic of dax information functions isblank isnumber istext isnontext iserror",
+    "url": "https://nurhayatyurtaslan.medium.com/unraveling-the-magic-of-dax-information-functions-isblank-isnumber-istext-isnontext-iserror-1c3069d8dc7f",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "demystifying dax functions a comprehensive guide with examples",
+    "url": "https://nurhayatyurtaslan.medium.com/demystifying-dax-functions-a-comprehensive-guide-with-examples-200641b147d5",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "dart programlama dilinde static üyeler",
+    "url": "https://nurhayatyurtaslan.medium.com/dart-programlama-dilinde-static-%C3%BCyeler-d62e19fdc24d",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "dart programlama dilinde kapsam scope kavramı",
+    "url": "https://nurhayatyurtaslan.medium.com/dart-programlama-dilinde-kapsam-scope-kavram%C4%B1-c52de738c7b5",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "time complexity dart language",
+    "url": "https://nurhayatyurtaslan.medium.com/time-complexity-dart-language-7dc13f3874de",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "queue yapısı nedir dart dilinde örnekler",
+    "url": "https://nurhayatyurtaslan.medium.com/queue-yap%C4%B1s%C4%B1-nedir-dart-dilinde-%C3%B6rnekler-e0bd9400d2bf",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "akış şemaları özellikleri ve kullanım alanları",
+    "url": "https://nurhayatyurtaslan.medium.com/ak%C4%B1%C5%9F-%C5%9Femalar%C4%B1-%C3%B6zellikleri-ve-kullan%C4%B1m-alanlar%C4%B1-fc15d39a8514",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "linked list nedir dart ile uygulamalı örnekler",
+    "url": "https://nurhayatyurtaslan.medium.com/linked-list-nedir-dart-ile-uygulamal%C4%B1-%C3%B6rnekler-ed9ddde28817",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "hayatın kendisi bir algoritma nedir bu algoritma ve özellikleri",
+    "url": "https://nurhayatyurtaslan.medium.com/hayat%C4%B1n-kendisi-bir-algoritma-nedir-bu-algoritma-ve-%C3%B6zellikleri-4ce21219fa22",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "algoritma türleri örnekleri",
+    "url": "https://nurhayatyurtaslan.medium.com/algoritma-t%C3%BCrleri-%C3%B6rnekleri-c1f81e1d10da",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "stack yapısı nedir dart dilinde stack",
+    "url": "https://nurhayatyurtaslan.medium.com/stack-yap%C4%B1s%C4%B1-nedir-dart-dilinde-stack-49314cd3be9b",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "algoritmanın morfolojisi nedir",
+    "url": "https://nurhayatyurtaslan.medium.com/algoritman%C4%B1n-morfolojisi-nedir-08206abf8a0f",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "binary search trees bst i̇kili ağaçların evrimi",
+    "url": "https://nurhayatyurtaslan.medium.com/binary-search-trees-bst-i%CC%87kili-a%C4%9Fa%C3%A7lar%C4%B1n-evrimi-4ca7c7f7c327",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "binary trees i̇kili ağaçlar nedir",
+    "url": "https://nurhayatyurtaslan.medium.com/binary-trees-i%CC%87kili-a%C4%9Fa%C3%A7lar-nedir-1cd7e5129bd2",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "dart dilinde ağaç veri yapıları bir giriş",
+    "url": "https://nurhayatyurtaslan.medium.com/dart-dilinde-a%C4%9Fa%C3%A7-veri-yap%C4%B1lar%C4%B1-bir-giri%C5%9F-eb418c16d36e",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "stack yapısı örnek senaryolar ve çözümler dart ile stack kullanımı",
+    "url": "https://nurhayatyurtaslan.medium.com/stack-yap%C4%B1s%C4%B1-%C3%B6rnek-senaryolar-ve-%C3%A7%C3%B6z%C3%BCmler-dart-ile-stack-kullan%C4%B1m%C4%B1-4cef597b25c1",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "dart dilinde map yapısı ve metodları basitten zora doğru kapsamlı rehber",
+    "url": "https://nurhayatyurtaslan.medium.com/dart-dilinde-map-yap%C4%B1s%C4%B1-ve-metodlar%C4%B1-basitten-zora-do%C4%9Fru-kapsaml%C4%B1-rehber-7470003ac607",
+    "date": "",
+    "summary": ""
+  },
+  {
+    "title": "dart dilinde list yapısı ve metodları detaylı rehber örnek sorular ve çözümleri",
+    "url": "https://nurhayatyurtaslan.medium.com/dart-dilinde-list-yap%C4%B1s%C4%B1-ve-metodlar%C4%B1-detayl%C4%B1-rehber-%C3%B6rnek-sorular-ve-%C3%A7%C3%B6z%C3%BCmleri-7fde5029826b",
+    "date": "",
     "summary": ""
   }
 ]

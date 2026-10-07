@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import posts from "../../../data/medium.json";
+import archive from "../../../data/medium.json";
+
+function plain(value: string) {
+  return value.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, "$1").replace(/<[^>]*>/g, "").replace(/&amp;/g, "&").replace(/&nbsp;/g, " ").trim();
+}
 
 export async function GET() {
   try {
@@ -7,17 +11,19 @@ export async function GET() {
     if (!response.ok) throw new Error("Feed unavailable");
     const xml = await response.text();
     const items = xml.match(/<item>[\s\S]*?<\/item>/g) ?? [];
-    const enriched = posts.map(post => {
-      const id = post.url.split("-").at(-1);
-      const item = items.find(value => id && value.includes(id));
-      const content = item?.match(/<content:encoded><!\[CDATA\[([\s\S]*?)\]\]><\/content:encoded>/)?.[1];
-      const first = content?.match(/<p(?:\s[^>]*)?>([\s\S]*?)<\/p>/)?.[1];
-      const excerpt = first?.replace(/<[^>]*>/g, "").replace(/&amp;/g, "&").replace(/&nbsp;/g, " ").trim();
-      // The interface remains English; keep the existing English summary for Turkish articles.
-      return { ...post, summary: excerpt && !/[çğıöşüÇĞİÖŞÜ]/.test(excerpt) ? excerpt.slice(0, 360) : post.summary };
+    const feed = items.flatMap(item => {
+      const field = (name: string) => plain(item.match(new RegExp(`<${name}[^>]*>([\\s\\S]*?)</${name}>`))?.[1] ?? "");
+      const title = field("title");
+      const url = field("link").split("?")[0];
+      const date = new Date(field("pubDate"));
+      if (!title || !/^https:\/\/nurhayatyurtaslan\.medium\.com\//.test(url) || !Number.isFinite(date.getTime())) return [];
+      return [{ title, url, date: date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric", timeZone: "UTC" }), summary: "" }];
     });
-    return NextResponse.json({ posts: enriched });
+    if (!feed.length) throw new Error("Empty feed");
+    const postId = (url: string) => url.split("?")[0].split("-").at(-1);
+    const posts = [...feed, ...archive.filter(post => !feed.some(item => postId(item.url) === postId(post.url)))];
+    return NextResponse.json({ posts, source: "rss", archiveComplete: false });
   } catch {
-    return NextResponse.json({ posts });
+    return NextResponse.json({ posts: archive, source: "archive", archiveComplete: false });
   }
 }

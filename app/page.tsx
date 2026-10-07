@@ -3,6 +3,8 @@
 import { useEffect, useId, useMemo, useRef, useState, type ReactNode, type PointerEvent as ReactPointerEvent } from "react";
 import { ArrowUpRight, BookOpen, BriefcaseBusiness, Building2, Folder, Github, GraduationCap, House, Linkedin, Mail, Maximize2, Minimize2, Minus, PenLine, Smartphone, Sparkles, SquareTerminal, UserRound, type LucideIcon } from "lucide-react";
 import mediumPosts from "../data/medium.json";
+import { workProjects } from "../data/work-projects";
+import savedPersonalRepos from "../data/personal-repos.json";
 import StateRobot from "./state-robot";
 import SessionReadout from "./session-readout";
 import BootScreen from "./boot-screen";
@@ -13,10 +15,11 @@ import DesktopMark from "./desktop-mark";
 import CalendarWidget from "./calendar-widget";
 import ProfileGif from "./profile-gif";
 import GitHubSummaryWidgets from "./github-summary-widgets";
+import DesktopMenuBar from "./desktop-menu-bar";
 
 type WindowId = "work" | "github" | "writing" | "about" | "terminal" | `${"terminal" | "work" | "github" | "writing" | "about"}-${number}` | "phone";
 type HomeWidgetId = "github" | "linkedin" | "medium";
-type Theme = "neutral" | "ink" | "sand";
+type Theme = "neutral" | "ink" | "sand" | "sky" | "sage" | "lavender" | "rose";
 type Offset = { x: number; y: number };
 
 const identity = {
@@ -30,11 +33,11 @@ const identity = {
 };
 
 const roles = [
-  { company: "Ticimax", role: "Mobile Engineer", dates: "since December 2025" },
-  { company: "MasterFabric", role: "Open-source developer and volunteer trainer", dates: "since June 2025" },
+  { company: "Ticimax", role: "Mobile Engineer", dates: "since December 2025", url: "https://www.ticimax.com/" },
+  { company: "MasterFabric", role: "Open-source developer and volunteer trainer", dates: "since June 2025", url: "https://www.masterfabric.co/" },
 ];
 
-const education = { institution: "Erciyes University", degree: "Electrical and Electronic Engineering", dates: "2018–2022" };
+const education = { institution: "Erciyes University", degree: "Electrical and Electronic Engineering", dates: "2018–2022", url: "https://www.erciyes.edu.tr/" };
 
 const githubProjects = [
   ["Expo", "https://github.com/masterfabric-mobile/masterfabric-expo"],
@@ -112,7 +115,7 @@ function GlassState({ loading = false, children }: { loading?: boolean; children
 }
 
 function useMediumFeed() {
-  const [posts, setPosts] = useState<typeof mediumPosts>([]);
+  const [posts, setPosts] = useState<typeof mediumPosts>(mediumPosts);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   useEffect(() => {
     const controller = new AbortController();
@@ -149,11 +152,11 @@ function GitHubDistributionWidget() {
   </article>;
 }
 
-function GitHubActivityGameWidget() {
+function GitHubActivityGameWidget({ theme }: { theme: Theme }) {
   const [failed, setFailed] = useState(false);
   return <article className="home-widget glass-card github-activity-widget" aria-label="GitHub Activity Game">
     <div className="usage-card-heading"><span className="widget-label">GITHUB ACTIVITY GAME</span><a href={identity.github + "#activity-game"} target="_blank" rel="noreferrer" aria-label="Open GitHub Activity Game"><Github size={16} /></a></div>
-    {failed ? <p role="status">Activity Game temporarily unavailable.</p> : <img className="github-activity-game" src="/api/github-activity-game" alt="Animated snake moving through Nurhayat Yurtaslan’s GitHub contribution grid" onError={() => setFailed(true)} />}
+    {failed ? <p role="status">Activity Game temporarily unavailable.</p> : <img className="github-activity-game" src={`/api/github-activity-game?theme=${theme}`} alt="Animated snake moving through Nurhayat Yurtaslan’s GitHub contribution grid" onError={() => setFailed(true)} />}
   </article>;
 }
 
@@ -217,8 +220,16 @@ function ToolShelf() {
 }
 
 function DesktopFolders({ openWindow }: { openWindow: (id: WindowId) => void }) {
-  const folders: { label: string; window: WindowId }[] = [{ label: "Work", window: "work" }, { label: "Writing", window: "writing" }];
-  return <aside className="desktop-folders" aria-label="Desktop folders">{folders.map((folder) => <button className="desktop-folder" key={folder.label} onClick={() => openWindow(folder.window)}><Folder size={28} strokeWidth={1.5} /><span>{folder.label}</span></button>)}</aside>;
+  const folders: { label: string; window: WindowId; line: string; url: string }[] = [{ label: "Work", window: "work", line: "Mobile, web, and open-source projects.", url: identity.github }, { label: "Writing", window: "writing", line: "Technical articles on Medium and LinkedIn.", url: identity.medium }, { label: "GitHub", window: "github", line: "Public repositories and contribution activity.", url: identity.github }, { label: "About", window: "about", line: identity.title, url: identity.linkedin }];
+  const [selected, setSelected] = useState<string | null>(null);
+  const [tip, setTip] = useState(false);
+  const [quick, setQuick] = useState<(typeof folders)[number] | null>(null);
+  const quickClose = useRef<HTMLButtonElement>(null);
+  const origin = useRef<HTMLButtonElement>(null);
+  useEffect(() => { try { if (!localStorage.getItem("desktop-folder-tip-v1")) { setTip(true); localStorage.setItem("desktop-folder-tip-v1", "seen"); } } catch { setTip(true); } const timer = setTimeout(() => setTip(false), 7000); return () => clearTimeout(timer); }, []);
+  useEffect(() => { if (quick) quickClose.current?.focus(); }, [quick]);
+  const closeQuick = () => { setQuick(null); origin.current?.focus(); };
+  return <><aside className="desktop-folders" aria-label="Desktop folders">{folders.map(folder => <button className={`desktop-folder ${selected === folder.label ? "is-selected" : ""}`} key={folder.label} aria-pressed={selected === folder.label} onFocus={() => setSelected(folder.label)} onClick={() => setSelected(folder.label)} onDoubleClick={() => openWindow(folder.window)} onKeyDown={event => { if (event.key === "Enter") { event.preventDefault(); event.stopPropagation(); openWindow(folder.window); } if (event.key === " ") { event.preventDefault(); event.stopPropagation(); origin.current = event.currentTarget; setQuick(folder); } }}><Folder size={52} strokeWidth={1.3} /><span>{folder.label}</span></button>)}{tip && <p className="desktop-folder-tip">Double-click to open · Space for Quick Look</p>}</aside>{quick && <div className="quick-look-overlay" onKeyDown={event => { event.stopPropagation(); if (event.key === "Escape") closeQuick(); if (event.key === "Tab") { event.preventDefault(); const elements = Array.from(event.currentTarget.querySelectorAll<HTMLElement>("button,a")); elements[(elements.indexOf(document.activeElement as HTMLElement) + (event.shiftKey ? -1 : 1) + elements.length) % elements.length]?.focus(); } }}><div className="glass-card quick-look-panel" role="dialog" aria-modal="true" aria-label={`Quick Look: ${quick.label}`}><button ref={quickClose} className="quick-look-close" onClick={closeQuick} aria-label="Close Quick Look">×</button><span className="widget-label">QUICK LOOK</span><h2>{quick.label}</h2><p>{quick.line}</p><a href={quick.url} target="_blank" rel="noreferrer">Open original ↗</a></div></div>}</>;
 }
 
 function TerminalContent({ openWindow }: { openWindow: (id: WindowId) => void }) {
@@ -262,14 +273,22 @@ function GitHubList() {
   return <div className="repo-grid">{githubProjects.length === 0 && <GlassState />}{githubProjects.map(([name, url]) => <a className="repo-card" href={url} target="_blank" rel="noreferrer" key={name}><span className="repo-mark"><Github size={19} strokeWidth={1.7} /></span><span className="repo-copy"><strong>{name}</strong><small>{url.replace("https://github.com/", "")}</small></span><ArrowUpRight className="repo-arrow" size={17} strokeWidth={1.6} /></a>)}<a className="repo-card repo-academy" href={academy[1]} target="_blank" rel="noreferrer"><span className="repo-mark"><GraduationCap size={19} strokeWidth={1.7} /></span><span className="repo-copy"><strong>{academy[0]}</strong><small>academy-app.masterfabric.co</small></span><ArrowUpRight className="repo-arrow" size={17} strokeWidth={1.6} /></a></div>;
 }
 
-function SelectedWork() {
+function SelectedWork({ openWindow }: { openWindow: (id: WindowId) => void }) {
+  const [personalRepos, setPersonalRepos] = useState(savedPersonalRepos);
+  useEffect(() => {
+    const controller = new AbortController();
+    fetch("/api/personal-repos", { signal: controller.signal }).then(response => { if (!response.ok) throw new Error("GitHub unavailable"); return response.json(); }).then(data => { if (Array.isArray(data.repos)) setPersonalRepos(data.repos); }).catch(() => {});
+    return () => controller.abort();
+  }, []);
   const descriptions = ["Cross-platform application framework with theming, internationalization, and developer tools.", "The MasterFabric website.", "A non-profit Swift project supported by MasterFabric and EduTech.", "The MasterFabric Manifesto project.", "A developer onboarding portal.", "The MasterFabric Project Tracker project.", "A developer internship roadmap.", "The MasterFabric Academy application."];
-  return <FolderBrowser nested title="Work" files={[...githubProjects, academy].map(([name, url], index) => ({ name: (name === "Project tracker" ? "Project Tracker" : name) + ".md", text: descriptions[index], url }))} />;
+  const selectedFiles = [...githubProjects, academy].map(([name, url], index) => ({ name: (name === "Project tracker" ? "Project Tracker" : name) + ".md", text: descriptions[index], url }));
+  const personalFiles = personalRepos.filter(repo => !selectedFiles.some(file => file.url === repo.url)).map(repo => ({ name: repo.name + ".md", url: repo.url, text: [repo.description || "A public project from my GitHub account.", repo.language ? `Primary language: ${repo.language}` : "", `Repository: NurhayatYurtaslan/${repo.name}`].filter(Boolean).join("\n\n") }));
+  return <FolderBrowser title="Work" onNavigate={openWindow} files={[...selectedFiles, ...personalFiles]} />;
 }
 
-function WritingList() {
+function WritingList({ openWindow }: { openWindow: (id: WindowId) => void }) {
   const feed = useMediumFeed();
-  return <FolderBrowser nested title="Writing" loading={feed.status === "loading"} files={[...linkedinPosts.map(([date, title, url]) => ({ name: title + ".md", text: date + " · LinkedIn", url })), ...feed.posts.map(post => ({ name: post.title + ".md", text: post.date + " · Medium\n\n" + post.summary, url: post.url }))]} />;
+  return <FolderBrowser title="Writing" onNavigate={openWindow} files={[...linkedinPosts.map(([date, title, url]) => ({ name: title + ".md", text: date + " · LinkedIn", url })), ...feed.posts.map(post => ({ name: post.title + ".md", text: [post.date, "Medium"].filter(Boolean).join(" · ") + "\n\n" + post.summary, url: post.url }))]} />;
 }
 
 function AboutContent({ time, date }: { time: string; date: string }) {
@@ -333,48 +352,49 @@ function MobilePortfolio({ prefix }: { prefix: string }) {
   </div>;
 }
 
-type PhoneScreen = "home" | "work" | "writing" | "about" | "contact";
+type PhoneScreen = "home" | "work" | "writing";
 
 function PhoneExperience() {
   const [screen, setScreen] = useState<PhoneScreen>("home");
-  const [time, setTime] = useState("--:--");
+  const [writingTab, setWritingTab] = useState<"medium" | "linkedin">("medium");
+  const { posts, status } = useMediumFeed();
   const scrollRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const update = () => setTime(new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Istanbul", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(new Date()));
-    update();
-    const timer = window.setInterval(update, 1000);
-    return () => window.clearInterval(timer);
-  }, []);
   const navigate = (next: PhoneScreen) => { setScreen(next); scrollRef.current?.scrollTo({ top: 0 }); };
   return <div className="phone-experience">
     {screen !== "home" && <button className="phone-home-control" onClick={() => navigate("home")} aria-label="Return to phone home">Back</button>}
-    <div className={`phone-experience-scroll ${screen === "home" ? "phone-snap-pages" : ""}`} ref={scrollRef} tabIndex={0} aria-label="Phone screen content">
-      {screen === "home" ? <><section className="phone-first-screen"><h1>{identity.name}</h1><p>{identity.title}</p><time>Istanbul · {time}</time></section>
-        <section className="phone-bio-screen"><h2>Bio</h2><p>Mobile Engineer at Ticimax.</p><p>Open-source developer and volunteer trainer at MasterFabric.</p><small>Erciyes University, Electrical and Electronic Engineering, 2018–2022.</small></section></>
+    <div className="phone-experience-scroll" ref={scrollRef} tabIndex={0} aria-label="Phone screen content">
+      {screen === "home" ? <><section className="phone-first-screen"><span className="widget-label">PERSONAL PORTFOLIO</span><h1>{identity.name}</h1><p>{identity.title}</p><nav className="phone-social-links" aria-label="Social profiles"><a href={identity.linkedin} target="_blank" rel="noreferrer" aria-label="Open LinkedIn profile"><Linkedin size={22} /></a><a href={identity.github} target="_blank" rel="noreferrer" aria-label="Open GitHub profile"><Github size={22} /></a><a href={identity.medium} target="_blank" rel="noreferrer" aria-label="Open Medium profile"><span className="medium-social-mark" aria-hidden="true">M</span></a></nav></section><section className="phone-home-section phone-about-copy"><h2>About</h2><p>I’m a Mobile Engineer and Agentic AI Developer focused on mobile applications, AI agents, and open-source tools. My work brings together product development, practical experimentation, and a curiosity for how software systems make decisions.</p><p>Alongside my role at Ticimax, I contribute to open-source projects and volunteer training at MasterFabric. I share what I learn through technical writing on LinkedIn and Medium, covering mobile development, agent behavior, model memory, and the boundaries of tool use.</p><h3>Experience</h3>{roles.map(role => <div className="phone-experience-item" key={role.company}><a href={role.url} target="_blank" rel="noreferrer"><strong>{role.company}</strong><ArrowUpRight size={18} aria-hidden="true" /></a><p>{role.role}</p><small>{role.dates}</small></div>)}<h3>Education</h3><div className="phone-experience-item"><a href={education.url} target="_blank" rel="noreferrer"><strong>{education.institution}</strong><ArrowUpRight size={18} aria-hidden="true" /></a><p>{education.degree}</p><small>{education.dates}</small></div></section></>
       : <section className="phone-detail-screen"><h2>{screen[0].toUpperCase() + screen.slice(1)}</h2>
-        {screen === "work" && <div className="phone-simple-list">{[...githubProjects, academy].map(([name, url]) => <a key={url} href={url} target="_blank" rel="noreferrer">{name === "Project tracker" ? "Project Tracker" : name}</a>)}</div>}
-        {screen === "writing" && <div className="phone-simple-list">{[...linkedinPosts.map(([, title, url]) => ({ title, url })), ...mediumPosts.slice(0, 3)].map(post => <a key={post.url} href={post.url} target="_blank" rel="noreferrer">{post.title}</a>)}</div>}
-        {screen === "about" && <div className="phone-about-copy"><p>Nurhayat works at Ticimax as a Mobile Engineer and contributes to MasterFabric as an open-source developer and volunteer trainer.</p><p>Her work spans mobile applications, agents, and open source. She shares what she learns through technical writing and training.</p></div>}
-        {screen === "contact" && <div className="phone-simple-list"><a href={`mailto:${identity.email}`}>{identity.email}</a><a href={identity.linkedin} target="_blank" rel="noreferrer">LinkedIn</a><a href={identity.medium} target="_blank" rel="noreferrer">Medium</a><a href={identity.github} target="_blank" rel="noreferrer">GitHub</a></div>}
+        {screen === "work" && <div className="phone-project-list">{workProjects.map(project => <article className="phone-project-card" key={project.url}><header><span className="phone-project-icon"><Github size={19} aria-hidden="true" /></span><a href={project.url} target="_blank" rel="noreferrer" aria-label={`Open ${project.name}`}><h3>{project.name}</h3><ArrowUpRight size={18} aria-hidden="true" /></a></header>{project.repo && <small className="phone-project-repo">{project.repo}</small>}<p>{project.description}</p><ul className="phone-project-tags" aria-label="Project technologies">{project.tags.map(tag => <li key={tag}>{tag}</li>)}</ul><div className="phone-project-role"><span className="widget-label">MY CONTRIBUTION</span>{project.role && <strong>{project.role}</strong>}<p>{project.contribution}</p>{project.evidence && <a href={project.evidence} target="_blank" rel="noreferrer">View contribution <ArrowUpRight size={13} aria-hidden="true" /></a>}</div></article>)}</div>}
+        {screen === "writing" && <><div className="phone-writing-tabs" role="group" aria-label="Writing platform"><button aria-pressed={writingTab === "medium"} onClick={() => setWritingTab("medium")}>Medium</button><button aria-pressed={writingTab === "linkedin"} onClick={() => setWritingTab("linkedin")}>LinkedIn</button></div><div className="phone-writing-list">{(writingTab === "linkedin" ? linkedinPosts.map(([date, title, url], index) => ({ title, url, date, source: "LinkedIn", shortTitle: ["Laya: Calls & Boundaries", "Jev: State & Decisions", "Model Memory & RAG"][index] })) : (posts.length ? posts : mediumPosts).map(post => ({ ...post, source: "Medium", shortTitle: /WorkManagerHelper/i.test(post.title) ? "WorkManagerHelper" : /QuickSort/i.test(post.title) ? "QuickSort Explained" : /Tool Result/i.test(post.title) ? "Tool Results & Change" : post.title.split(":")[0] }))).map(post => <a key={post.url} href={post.url} target="_blank" rel="noreferrer" title={post.title} aria-label={`${post.title} — ${post.source}`}><span className="phone-writing-source">{post.source === "LinkedIn" ? <Linkedin size={14} /> : <PenLine size={14} />} {post.source}<time>{post.date}</time></span><span className="phone-writing-title"><strong>{post.shortTitle}</strong><ArrowUpRight size={17} /></span></a>)}</div>{writingTab === "medium" && <p className="phone-writing-note">{status === "loading" ? "Fetching stories…" : "Stories available from the Medium feed."} <a href={identity.medium} target="_blank" rel="noreferrer">Full profile ↗</a></p>}</>}
       </section>}
     </div>
-    <nav className="phone-screen-nav" aria-label="Phone navigation">{(["work", "writing", "about", "contact"] as const).map(id => <button key={id} aria-current={screen === id ? "page" : undefined} onClick={() => navigate(id)}>{id[0].toUpperCase() + id.slice(1)}</button>)}</nav>
+    <nav className="phone-screen-nav" aria-label="Phone navigation">{(["home", "work", "writing"] as const).map(id => <button key={id} aria-current={screen === id ? "page" : undefined} onClick={() => navigate(id)}>{id[0].toUpperCase() + id.slice(1)}</button>)}</nav>
   </div>;
 }
 
 const phonePresets = [
   { name: "iPhone 16", width: 393, height: 852 },
+  { name: "iPhone 13 Mini", width: 375, height: 812 },
+  { name: "iPhone 14", width: 390, height: 844 },
+  { name: "iPhone 15 Pro", width: 393, height: 852 },
+  { name: "iPhone 16 Pro", width: 402, height: 874 },
+  { name: "iPhone 16 Pro Max", width: 440, height: 956 },
+  { name: "Google Pixel 7", width: 412, height: 915 },
+  { name: "Galaxy S24 · browser viewport", width: 360, height: 780 },
+  { name: "Galaxy S9+ · browser viewport", width: 320, height: 658 },
   { name: "Compact phone", width: 375, height: 812 },
   { name: "Wide phone", width: 430, height: 932 },
 ] as const;
 
 function PhonePreview({ close, signature }: { close: () => void; signature: boolean }) {
   const [selected, setSelected] = useState(0);
+  const [finish, setFinish] = useState("graphite");
   const [scale, setScale] = useState(1);
   const screenRef = useRef<HTMLDivElement>(null);
   const device = phonePresets[selected];
   useEffect(() => {
-    const resize = () => setScale(Math.min(1, (window.innerWidth - 48) / (device.width + 28), Math.max(120, window.innerHeight - 110) / (device.height + 28)));
+    const resize = () => setScale(Math.min(1, (window.innerWidth - 48) / (device.width + 28), Math.max(120, window.innerHeight - (window.innerWidth > 800 ? 210 : 110)) / (device.height + 28)));
     resize();
     window.addEventListener("resize", resize);
     return () => window.removeEventListener("resize", resize);
@@ -382,9 +402,10 @@ function PhonePreview({ close, signature }: { close: () => void; signature: bool
   return <div className="phone-backdrop">
     <div className="phone-device-controls"><label htmlFor="preview-device">{signature && <span className="signature-mark">✦ </span>}Phone</label><select id="preview-device" value={selected} onChange={event => { setSelected(Number(event.target.value)); screenRef.current?.scrollTo({ top: 0 }); }}>{phonePresets.map((preset, index) => <option value={index} key={preset.name}>{preset.name} · {preset.width} × {preset.height}</option>)}</select></div>
     <button className="phone-close" aria-label="Close phone portfolio" onClick={close}>×</button>
+    <div className="phone-finish-picker" role="group" aria-label="Phone case color">{["graphite", "silver", "gold", "blue", "rose"].map(color => <button key={color} className={`finish-swatch finish-${color}`} aria-label={`${color[0].toUpperCase() + color.slice(1)} phone case`} title={color} aria-pressed={finish === color} onClick={() => setFinish(color)} />)}</div>
     <div className="phone-size-holder" style={{ width: (device.width + 28) * scale, height: (device.height + 28) * scale }}>
-      <div className="iphone-frame device-preview-frame" style={{ width: device.width + 28, height: device.height + 28, transform: `scale(${scale})` }}>
-        <div className="dynamic-island" />
+      <div className={`iphone-frame device-preview-frame phone-finish-${finish}`} style={{ width: device.width + 28, height: device.height + 28, transform: `scale(${scale})` }}>
+        <div className={device.name.startsWith("Google") || device.name.startsWith("Galaxy") ? "dynamic-island android-camera" : "dynamic-island"} />
         <div className="phone-screen-clip"><div ref={screenRef} className="iphone-screen" tabIndex={0} aria-label={`Scrollable portfolio, ${device.name}`}><PhoneExperience /></div></div>
       </div>
     </div>
@@ -395,7 +416,7 @@ function HomeWidgetGrid({ widgets, onDraggingChange }: {
   widgets: { id: HomeWidgetId; content: ReactNode }[];
   onDraggingChange: (id: HomeWidgetId | null) => void;
 }) {
-  const [order, setOrder] = useState<HomeWidgetId[]>(["github", "linkedin", "medium"]);
+  const [order, setOrder] = useState<HomeWidgetId[]>(() => widgets.map(widget => widget.id));
   const [draggingId, setDraggingId] = useState<HomeWidgetId | null>(null);
   const boardRef = useRef<HTMLDivElement>(null);
   const stopDragRef = useRef<(() => void) | null>(null);
@@ -532,7 +553,7 @@ export default function Home() {
   const [draggingWidget, setDraggingWidget] = useState<HomeWidgetId | null>(null);
   const windowDragging = useRef(false);
   const [cursor, setCursor] = useState({ x: 24, y: 24, hover: false, grabbing: false, text: false, visible: false });
-  const themes: Theme[] = ["neutral", "ink", "sand"];
+  const themes: Theme[] = ["neutral", "ink", "sand", "sky", "sage", "lavender", "rose"];
   const nextTheme = useMemo(() => themes[(themes.indexOf(theme) + 1) % themes.length], [theme]);
 
   useEffect(() => {
@@ -639,10 +660,10 @@ export default function Home() {
   const windowContent = (id: WindowId) => {
     if (id.startsWith("terminal")) return <TerminalContent openWindow={openWindow} />;
     if (id === "phone") return <MobilePortfolio prefix="phone" />;
-    if (id.startsWith("work")) return <SelectedWork />;
-    if (id.startsWith("github")) return <FolderBrowser title="GitHub" files={[{ name: "contributions.md", content: <GitHubActivityWidget /> }]} />;
-    if (id.startsWith("writing")) return <WritingList />;
-    return <FolderBrowser title="About" files={[{ name: "now.txt", text: "Ticimax · Mobile Developer · since December 2025\nMasterFabric · Open-source developer and volunteer trainer · since June 2025" }, { name: "education.txt", text: "Erciyes University\nElectrical and Electronic Engineering\n2018–2022\nBachelor’s degree in electrical and electronic engineering." }]} />;
+    if (id.startsWith("work")) return <SelectedWork openWindow={openWindow} />;
+    if (id.startsWith("github")) return <FolderBrowser title="GitHub" onNavigate={openWindow} files={[{ name: "contributions.md", text: "Public GitHub contribution history.", url: identity.github, content: <GitHubActivityWidget /> }]} />;
+    if (id.startsWith("writing")) return <WritingList openWindow={openWindow} />;
+    return <FolderBrowser title="About" onNavigate={openWindow} files={[{ name: "now.txt", text: "Ticimax · Mobile Developer · since December 2025\nMasterFabric · Open-source developer and volunteer trainer · since June 2025", url: identity.linkedin }, { name: "education.txt", text: "Erciyes University\nElectrical and Electronic Engineering\n2018–2022\nBachelor’s degree in electrical and electronic engineering.", url: education.url }]} />;
   };
 
   const frontWindow = [...zOrder].reverse().find(id => openWindows.includes(id) && !minimizedWindows.includes(id));
@@ -696,8 +717,8 @@ export default function Home() {
   const fileWindows: WindowId[] = openWindows.filter((id) => id !== "phone");
   const taskWindows = [...fileWindows, ...minimizedWindows.filter(id => !fileWindows.includes(id) && id !== "phone")];
 
-  const dockItems: { label: string; icon: LucideIcon; window?: WindowId }[] = [{ label: "Home", icon: House }, { label: "Phone", icon: Smartphone, window: "phone" }, { label: "Mail", icon: Mail }, { label: "Terminal", icon: SquareTerminal, window: "terminal" }, { label: "Theme", icon: Sparkles }];
-  const homeWidgets = [{ id: "github" as const, content: <GitHubActivityGameWidget /> }, { id: "linkedin" as const, content: <StoryWidget label="LATEST ON LINKEDIN" posts={linkedinPosts} source="LinkedIn" /> }, { id: "medium" as const, content: <StoryWidget label="LATEST ON MEDIUM" posts={mediumPosts.slice(0, 3).map((post) => [post.date, post.title, post.url])} source="Medium" /> }];
+  const dockItems: { label: string; icon: LucideIcon; window?: WindowId }[] = [{ label: "Home", icon: House }, { label: "Work", icon: BriefcaseBusiness, window: "work" }, { label: "Writing", icon: PenLine, window: "writing" }, { label: "About", icon: UserRound, window: "about" }, { label: "Phone preview", icon: Smartphone, window: "phone" }, { label: "Mail", icon: Mail }, { label: "Terminal", icon: SquareTerminal, window: "terminal" }, { label: "Theme", icon: Sparkles }];
+  const homeWidgets = [{ id: "github" as const, content: <GitHubActivityGameWidget key={theme} theme={theme} /> }];
 
-return <main className={`desktop theme-${theme} ${fullscreenWindow ? "has-fullscreen-window" : ""} ${cursor.visible && !cursor.text && !cursor.grabbing && !draggingWidget ? "cursor-ring-on" : ""} ${cursor.grabbing || draggingWidget ? "is-grabbing" : ""}`}><DesktopMark /><WidgetExchange /><BackgroundLight /><BootScreen /><section className="desktop-scene" id="home"><div className="home-shell"><div className="home-head"><Clock time={time} date={date} hourAngle={angles.hour} minuteAngle={angles.minute} /><div className="hero-copy"><div className="hero-identity-row"><ProfileGif /><div className="hero-identity-copy"><h1>{identity.name}</h1><p className="hero-title">{identity.title}</p></div></div><div className="home-utility-row mixed-widget-grid"><SessionReadout theme={theme} windows={openWindows.length} /></div></div><DesktopFolders openWindow={openWindow} /></div><div className="home-content-row"><HomeWidgetGrid widgets={homeWidgets} onDraggingChange={(id) => { setDraggingWidget(id); if (!id) setCursor((current) => ({ ...current, grabbing: false })); }} /><GitHubSummaryWidgets mode="stats" /></div></div>{openWindows.filter((id) => !minimizedWindows.includes(id)).map((id) => { const offset = windowOffsets[id]; const isFullscreen = fullscreenWindow === id; return <div key={id} className={`window-layer ${id === "phone" ? "phone-layer" : ""}`} style={{ zIndex: 20 + zOrder.indexOf(id) }}><div data-window-id={id} data-window-kind={id.split("-")[0]} className={`content-window ${frontWindow === id ? "is-front" : "is-behind"} ${draggingWindow === id ? "is-window-dragging" : ""} ${id.startsWith("terminal") ? "terminal-window" : ""} ${id === "phone" ? "phone-window-shell" : ""} ${isFullscreen ? "is-fullscreen" : ""}`} style={{ transform: `translate(calc(-50% + ${offset.x}px), ${offset.y}px)`, zIndex: 20 + zOrder.indexOf(id) }} onPointerDownCapture={() => bringToFront(id)} onFocusCapture={() => { if (frontWindow !== id) bringToFront(id); }}>{id === "phone" ? <PhonePreview signature={frontWindow === "phone"} close={() => closeWindow("phone")} /> : <><WindowBar title={(id.startsWith("terminal") ? "Terminal " + id.split("-")[1] : windowTitles[id.split("-")[0]])} signature={frontWindow === id} close={() => closeWindow(id)} minimize={() => minimizeWindow(id)} toggleFullscreen={() => toggleFullscreen(id)} isFullscreen={isFullscreen} onDrag={(event) => beginDrag(event, id)} /><div className={id.startsWith("terminal") ? "terminal-content" : "content-window-body"}>{windowContent(id)}</div></>}</div></div>; })}</section><section className="mobile-page"><MobilePortfolio prefix="mobile" /></section><nav className="dock desktop-dock" aria-label="Portfolio dock">{dockItems.map((item, index) => { const Icon = item.icon; if (item.label === "Home") return <button className="dock-item dock-home" data-label="Home" aria-label="Show desktop and return to top" aria-current={openWindows.every((id) => minimizedWindows.includes(id)) ? "page" : undefined} onClick={goHome} key={item.label}><Icon size={18} strokeWidth={1.7} /></button>; if (item.label === "Mail") return <a className="dock-item" data-label={item.label} aria-label={item.label} href={`mailto:${identity.email}`} key={item.label}><Icon size={18} strokeWidth={1.7} /></a>; if (item.label === "Theme") return <button className="dock-item" data-label={`${item.label} · ${nextTheme}`} aria-label={`Switch theme to ${nextTheme}`} onClick={() => setTheme(nextTheme)} key={item.label}><Icon size={18} strokeWidth={1.7} /></button>; return <button className="dock-item" data-label={item.label} aria-label={item.label} onClick={() => item.label === "Home" ? goHome() : item.window ? openWindow(item.window) : undefined} key={item.label}><Icon size={18} strokeWidth={1.7} /></button>; })}{taskWindows.length > 0 && <span className="dock-files-divider" aria-hidden="true" />}{taskWindows.map(id => { const Icon = id.startsWith("github") ? Github : id.startsWith("writing") ? PenLine : id.startsWith("about") ? UserRound : id.startsWith("terminal") ? SquareTerminal : Folder; const title = id.startsWith("terminal") ? "Terminal " + id.split("-")[1] : windowTitles[id.split("-")[0]]; return <button key={id} className="dock-item dock-file-tab" data-label={title} aria-label={`Show ${title}${minimizedWindows.includes(id) ? " (minimized)" : ""}`} aria-current={frontWindow === id ? "page" : undefined} onClick={() => bringToFront(id)}><Icon size={18} strokeWidth={1.7} /><i className={minimizedWindows.includes(id) ? "dock-file-status is-minimized" : "dock-file-status"} aria-hidden="true" /></button>; })}</nav><nav className="mobile-dock"><button onClick={() => document.getElementById("mobile-top")?.scrollIntoView({ behavior: "smooth" })}>Home</button><button onClick={() => document.getElementById("mobile-work")?.scrollIntoView({ behavior: "smooth" })}>Work</button><button onClick={() => document.getElementById("mobile-writing")?.scrollIntoView({ behavior: "smooth" })}>Writing</button><button onClick={() => document.getElementById("mobile-about")?.scrollIntoView({ behavior: "smooth" })}>About</button></nav>{quickLook && <div className="quick-look-overlay"><div className="glass-card quick-look-panel" ref={quickLookRef} role="dialog" aria-modal="true" aria-labelledby="quick-look-title"><button className="quick-look-close" aria-label="Close Quick Look" onClick={() => { setQuickLook(null); quickLookOrigin.current?.focus(); }}>×</button><span className="widget-label">QUICK LOOK</span><h2 id="quick-look-title">{quickLook.name}</h2><p>{quickLook.description}</p><a href={quickLook.url} target="_blank" rel="noreferrer">Open real project ↗</a></div></div>}<div className={`custom-cursor ${cursor.visible ? "is-visible" : ""} ${cursor.hover ? "is-hover" : ""} ${cursor.grabbing ? "is-grabbing" : ""} ${cursor.text ? "is-text" : ""}`} style={{ left: cursor.x, top: cursor.y }} /></main>;
+return <main className={`desktop theme-${theme} ${fullscreenWindow ? "has-fullscreen-window" : ""} ${cursor.visible && !cursor.text && !cursor.grabbing && !draggingWidget ? "cursor-ring-on" : ""} ${cursor.grabbing || draggingWidget ? "is-grabbing" : ""}`}><DesktopMenuBar openWindow={openWindow} closeWindow={() => { if (frontWindow) closeWindow(frontWindow); }} canClose={Boolean(frontWindow)} theme={theme} setTheme={setTheme} email={identity.email} /><DesktopMark /><WidgetExchange /><BackgroundLight /><BootScreen /><section className="desktop-scene" id="home"><div className="home-shell"><div className="home-head"><div className="hero-copy"><div className="hero-identity-row"><ProfileGif /><div className="hero-identity-copy"><h1>{identity.name}</h1><p className="hero-title">{identity.title}</p><div className="home-primary-links"><button onClick={() => openWindow("work")}>Projects <ArrowUpRight size={15} /></button><a href={`mailto:${identity.email}`}>Contact <ArrowUpRight size={15} /></a></div></div></div></div><DesktopFolders openWindow={openWindow} /></div><div className="home-content-row"><HomeWidgetGrid widgets={homeWidgets} onDraggingChange={(id) => { setDraggingWidget(id); if (!id) setCursor((current) => ({ ...current, grabbing: false })); }} /><GitHubSummaryWidgets mode="stats" /><div className="home-utility-row mixed-widget-grid"><SessionReadout theme={theme} windows={openWindows.length} /></div></div></div>{openWindows.filter((id) => !minimizedWindows.includes(id)).map((id) => { const offset = windowOffsets[id]; const isFullscreen = fullscreenWindow === id; return <div key={id} className={`window-layer ${id === "phone" ? "phone-layer" : ""}`} style={{ zIndex: 20 + zOrder.indexOf(id) }}><div data-window-id={id} data-window-kind={id.split("-")[0]} className={`content-window ${frontWindow === id ? "is-front" : "is-behind"} ${draggingWindow === id ? "is-window-dragging" : ""} ${id.startsWith("terminal") ? "terminal-window" : ""} ${id === "phone" ? "phone-window-shell" : ""} ${isFullscreen ? "is-fullscreen" : ""}`} style={{ transform: `translate(calc(-50% + ${offset.x}px), ${offset.y}px)`, zIndex: 20 + zOrder.indexOf(id) }} onPointerDownCapture={() => bringToFront(id)} onFocusCapture={() => { if (frontWindow !== id) bringToFront(id); }}>{id === "phone" ? <PhonePreview signature={frontWindow === "phone"} close={() => closeWindow("phone")} /> : <><WindowBar title={(id.startsWith("terminal") ? "Terminal " + id.split("-")[1] : windowTitles[id.split("-")[0]])} signature={frontWindow === id} close={() => closeWindow(id)} minimize={() => minimizeWindow(id)} toggleFullscreen={() => toggleFullscreen(id)} isFullscreen={isFullscreen} onDrag={(event) => beginDrag(event, id)} /><div className={id.startsWith("terminal") ? "terminal-content" : "content-window-body"}>{windowContent(id)}</div></>}</div></div>; })}</section><section className="mobile-page"><MobilePortfolio prefix="mobile" /></section><nav className="dock desktop-dock" aria-label="Portfolio dock">{dockItems.map(item => { const Icon = item.icon; const active = item.window ? openWindows.some(id => id === item.window || id.startsWith(item.window + "-")) : item.label === "Home" && !frontWindow; const matching = item.window ? [...zOrder].reverse().find(id => openWindows.includes(id) && (id === item.window || id.startsWith(item.window + "-"))) : undefined; return item.label === "Mail" ? <a key={item.label} className="dock-item" data-label="Mail" aria-label="Mail" href={`mailto:${identity.email}`}><Icon size={24} strokeWidth={1.7} /></a> : <button key={item.label} className={`dock-item ${active ? "is-active" : ""}`} data-label={item.label} aria-label={item.label === "Theme" ? `Switch theme to ${nextTheme}` : item.label} onClick={() => item.label === "Home" ? goHome() : item.label === "Theme" ? setTheme(nextTheme) : matching ? bringToFront(matching) : item.window && openWindow(item.window)}><Icon size={24} strokeWidth={1.7} />{active && <i className="dock-active-dot" aria-hidden="true" />}</button>; })}</nav><nav className="mobile-dock"><button onClick={() => document.getElementById("mobile-top")?.scrollIntoView({ behavior: "smooth" })}>Home</button><button onClick={() => document.getElementById("mobile-work")?.scrollIntoView({ behavior: "smooth" })}>Work</button><button onClick={() => document.getElementById("mobile-writing")?.scrollIntoView({ behavior: "smooth" })}>Writing</button><button onClick={() => document.getElementById("mobile-about")?.scrollIntoView({ behavior: "smooth" })}>About</button></nav>{quickLook && <div className="quick-look-overlay"><div className="glass-card quick-look-panel" ref={quickLookRef} role="dialog" aria-modal="true" aria-labelledby="quick-look-title"><button className="quick-look-close" aria-label="Close Quick Look" onClick={() => { setQuickLook(null); quickLookOrigin.current?.focus(); }}>×</button><span className="widget-label">QUICK LOOK</span><h2 id="quick-look-title">{quickLook.name}</h2><p>{quickLook.description}</p><a href={quickLook.url} target="_blank" rel="noreferrer">Open real project ↗</a></div></div>}<div className={`custom-cursor ${cursor.visible ? "is-visible" : ""} ${cursor.hover ? "is-hover" : ""} ${cursor.grabbing ? "is-grabbing" : ""} ${cursor.text ? "is-text" : ""}`} style={{ left: cursor.x, top: cursor.y }} /></main>;
 }

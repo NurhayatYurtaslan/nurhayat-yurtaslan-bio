@@ -4,17 +4,6 @@ import { useEffect } from "react";
 
 export default function WidgetExchange() {
   useEffect(() => {
-    const github = document.querySelector<HTMLElement>(".home-shell .github-activity-widget");
-    const session = document.querySelector<HTMLElement>(".home-shell .session-widgets");
-    const align = () => {
-      const currentSession = session ?? document.querySelector<HTMLElement>(".home-shell .session-widgets");
-      if (github && currentSession) currentSession.style.width = `${github.getBoundingClientRect().width}px`;
-    };
-    const observer = new ResizeObserver(align);
-    if (github) observer.observe(github);
-    const shell = document.querySelector(".home-shell");
-    if (shell) observer.observe(shell);
-    align();
     let stop = () => {};
     const start = (event: PointerEvent) => {
       if (event.button !== 0 || !(event.target instanceof Element) || event.target.closest("a,button,input,textarea")) return;
@@ -52,7 +41,7 @@ export default function WidgetExchange() {
       window.addEventListener("pointermove", move); window.addEventListener("pointerup", end); window.addEventListener("pointercancel", cancel);
     };
     window.addEventListener("pointerdown", start, true);
-    return () => { observer.disconnect(); stop(); window.removeEventListener("pointerdown", start, true); };
+    return () => { stop(); window.removeEventListener("pointerdown", start, true); };
   }, []);
   return null;
 }
