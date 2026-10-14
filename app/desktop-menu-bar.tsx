@@ -16,13 +16,13 @@ function IstanbulClock() {
   return <time className="desktop-menu-clock" dateTime={now?.toISOString()} title="Istanbul · Europe/Istanbul">{now ? new Intl.DateTimeFormat("en-GB", { timeZone: "Europe/Istanbul", weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(now) : "Istanbul"}</time>;
 }
 
-export default function DesktopMenuBar({ openWindow, closeWindow, canClose, theme, setTheme, contactUrl }: {
+export default function DesktopMenuBar({ openWindow, closeWindow, canClose, theme, setTheme, onContact }: {
   openWindow: (id: Destination) => void;
   closeWindow: () => void;
   canClose: boolean;
   theme: string;
-  setTheme: (theme: "neutral" | "ink" | "sand") => void;
-  contactUrl: string;
+  setTheme: (theme: "neutral" | "ink" | "sand" | "sky" | "sage" | "lavender" | "rose") => void;
+  onContact: () => void;
 }) {
   const [menu, setMenu] = useState<Menu | null>(null);
   const [tip, setTip] = useState(false);
@@ -51,10 +51,10 @@ export default function DesktopMenuBar({ openWindow, closeWindow, canClose, them
       { label: "Open About", action: () => openWindow("about") },
       { label: "Close Window", action: closeWindow, disabled: !canClose },
     ],
-    View: (["neutral", "ink", "sand"] as const).map(value => ({ label: value[0].toUpperCase() + value.slice(1), checked: theme === value, action: () => setTheme(value) })),
+    View: (["neutral", "ink", "sand", "sky", "sage", "lavender", "rose"] as const).map(value => ({ label: value[0].toUpperCase() + value.slice(1), checked: theme === value, action: () => setTheme(value) })),
     Go: [
-      ...([ ["Work", "work"], ["Writing", "writing"], ["GitHub", "github"], ["About", "about"], ["Terminal", "terminal"], ["Phone preview", "phone"] ] as const).map(([label, id]) => ({ label, action: () => openWindow(id) })),
-      { label: "Contact", action: () => { window.location.href = contactUrl; } },
+      ...([ ["Work", "work"], ["Writing", "writing"], ["About", "about"], ["Terminal", "terminal"], ["Phone preview", "phone"] ] as const).map(([label, id]) => ({ label, action: () => openWindow(id) })),
+      { label: "Contact", action: onContact },
     ],
   };
 

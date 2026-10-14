@@ -2,6 +2,12 @@
 
 The personal portfolio of Nurhayat Yurtaslan, built with Next.js and the App Router.
 
+## Current release
+
+Version **1.1.0** introduces the desktop Finder experience, Spotlight, seven themes, a responsive phone preview, animated GitHub statistics, and pet-reported browser measurements. Work contains featured projects and live public repositories in separate sections. Contact opens in a desktop window and submits through Web3Forms.
+
+See [CHANGELOG.md](CHANGELOG.md) for release notes. Created with Codex in collaboration with Nurhayat Yurtaslan.
+
 ## Run locally
 
 ```bash

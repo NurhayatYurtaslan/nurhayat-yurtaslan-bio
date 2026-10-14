@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, type FormEvent } from "react";
+import { ArrowUpRight } from "lucide-react";
 
 export default function ContactForm() {
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
@@ -35,11 +36,14 @@ export default function ContactForm() {
     <input type="hidden" name="subject" value="New portfolio contact" />
     <input type="hidden" name="from_name" value="Nurhayat Yurtaslan Portfolio" />
     <input type="checkbox" name="botcheck" className="contact-honeypot" tabIndex={-1} aria-hidden="true" autoComplete="off" />
-    <label>Name<input name="name" autoComplete="name" required maxLength={120} /></label>
-    <label>Your email<input name="email" type="email" autoComplete="email" required maxLength={254} /></label>
-    <label>Message<textarea name="message" required minLength={10} maxLength={5000} rows={6} /></label>
-    <p className="contact-privacy">Your message and reply address are sent through Web3Forms.</p>
-    <button type="submit" disabled={status === "sending"}>{status === "sending" ? "Sending…" : "Send message"}</button>
-    <p role="status" aria-live="polite">{status === "success" ? "Thank you. Your message has been sent." : status === "error" ? "Your message could not be sent. Please try again; your text has been kept." : ""}</p>
+    <div className="contact-identity-fields">
+      <label>Name<input name="name" placeholder="Your name" autoComplete="name" required maxLength={120} /></label>
+      <label>Your email<input name="email" placeholder="you@example.com" type="email" autoComplete="email" required maxLength={254} /></label>
+    </div>
+    <label className="contact-message-label">Message<textarea name="message" placeholder="Tell me a little about what you have in mind…" required minLength={10} maxLength={5000} rows={5} /></label>
+    <div className="contact-form-footer">
+      <button type="submit" disabled={status === "sending"}><span>{status === "sending" ? "Sending…" : "Send message"}</span><ArrowUpRight size={16} aria-hidden="true" /></button>
+    </div>
+    <p className="contact-feedback" data-state={status} role="status" aria-live="polite">{status === "success" ? "Thank you. Your message has been sent." : status === "error" ? "Your message could not be sent. Please try again; your text has been kept." : ""}</p>
   </form>;
 }
