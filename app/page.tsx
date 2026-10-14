@@ -26,7 +26,7 @@ const identity = {
   name: "Nurhayat Yurtaslan",
   title: "Agentic AI Developer | Mobile Engineer",
   homeLine: "Agentic AI Developer and Mobile Engineer. Mobile apps, agents, and open source.",
-  email: "nurhayatyurtaslan38@gmail.com",
+  email: "info@nurhayatyurtaslan.com",
   linkedin: "https://www.linkedin.com/in/nurhayatyurtaslan",
   medium: "https://medium.com/@nurhayatyurtaslan",
   github: "https://github.com/NurhayatYurtaslan",
