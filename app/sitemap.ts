@@ -3,5 +3,8 @@ import { siteUrl } from "./site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   // Desktop folders are in-page windows, not separate public routes.
-  return [{ url: siteUrl, changeFrequency: "monthly", priority: 1 }];
+  return [
+    { url: siteUrl, changeFrequency: "monthly", priority: 1 },
+    { url: siteUrl + "/contact", changeFrequency: "yearly", priority: 0.7 },
+  ];
 }

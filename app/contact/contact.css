@@ -1,0 +1,15 @@
+.contact-page { min-height: 100svh; padding: 32px 24px 64px; background: #f1f1ef; color: #202124; font-family: Arial, sans-serif; cursor: auto; }
+.contact-page a, .contact-page button { cursor: pointer; }
+.contact-page > a { color: #62666b; font-size: 13px; }
+.contact-page section { max-width: 540px; margin: 60px auto 0; }
+.contact-kicker { font-size: 10px; letter-spacing: .15em; }
+.contact-page h1 { font-size: 48px; margin: 12px 0; letter-spacing: -.05em; }
+.contact-form { display: grid; gap: 18px; margin-top: 32px; }
+.contact-form label { display: grid; gap: 8px; font-size: 13px; }
+.contact-form input:not([type=hidden]), .contact-form textarea { width: 100%; padding: 12px; border: 1px solid #cacdce; border-radius: 8px; background: #fafafa; color: #202124; font: inherit; cursor: text; }
+.contact-form textarea { resize: vertical; }
+.contact-form :focus-visible { outline: 2px solid #4775b8; outline-offset: 3px; }
+.contact-form button { padding: 13px 20px; border: 0; border-radius: 8px; background: #25282b; color: white; font: inherit; }
+.contact-form button:disabled { opacity: .6; cursor: wait; }
+.contact-form .contact-honeypot { display: none; }
+.contact-privacy, .contact-form [role=status] { margin: 0; font-size: 12px; line-height: 1.6; color: #62666b; }
