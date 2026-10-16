@@ -7,6 +7,10 @@ export type FolderFile = { name: string; text?: string; url?: string; content?: 
 const keyOf = (file: FolderFile) => `${file.group ?? ""}/${file.name}`;
 const kindOf = (file: FolderFile) => file.kind ?? (file.name.endsWith(".txt") ? "Text document" : "Markdown document");
 const timestamp = (file: FolderFile) => file.date ? Date.parse(file.date) || 0 : 0;
+const shortName = (name: string) => {
+  const characters = Array.from(name);
+  return characters.length > 32 ? characters.slice(0, 31).join("").trimEnd() + "…" : name;
+};
 
 export default function FolderBrowser({ title, files, initialFile, loading = false, notice, nestedGroups = false, onNavigate }: { title: string; files: FolderFile[]; initialFile?: string; loading?: boolean; notice?: ReactNode; nestedGroups?: boolean; onNavigate?: (id: "work" | "writing" | "github" | "about" | "tools") => void }) {
   const initial = files.find(file => file.name === initialFile || `${file.group}/${file.name}` === initialFile);
@@ -58,7 +62,7 @@ export default function FolderBrowser({ title, files, initialFile, loading = fal
         if (event.key === " ") { event.preventDefault(); event.stopPropagation(); setSelected(keyOf(item)); origin.current = event.currentTarget; setQuick(true); }
         else if (event.key === "Enter") { event.preventDefault(); event.stopPropagation(); enter(item); }
         else if (event.key.startsWith("Arrow")) { event.preventDefault(); event.stopPropagation(); const columns = view === "list" ? 1 : Math.max(1, Math.floor((grid.current?.clientWidth ?? 130) / 130)); const step = event.key === "ArrowLeft" ? -1 : event.key === "ArrowRight" ? 1 : event.key === "ArrowUp" ? -columns : columns; const next = Math.max(0, Math.min(ordered.length - 1, index + step)); setSelected(keyOf(ordered[next])); grid.current?.querySelectorAll<HTMLButtonElement>("button.native-file")[next]?.focus(); }
-      }}><span className="finder-file-name">{showingFolders ? <Folder className="native-subfolder-icon" size={view === "list" ? 19 : 44} strokeWidth={1.2} aria-hidden="true" /> : item.icon ?? <FileText size={view === "list" ? 19 : 38} strokeWidth={1.2} aria-hidden="true" />}<span>{item.name}{item.subtitle && <small>{item.subtitle}</small>}</span></span>{view === "list" && <><span>{kindOf(item)}</span><time dateTime={timestamp(item) ? item.date : undefined}>{timestamp(item) ? new Date(item.date!).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "—"}</time></>}</button></Fragment>)}
+      }}><span className="finder-file-name">{showingFolders ? <Folder className="native-subfolder-icon" size={view === "list" ? 19 : 44} strokeWidth={1.2} aria-hidden="true" /> : item.icon ?? <FileText size={view === "list" ? 19 : 38} strokeWidth={1.2} aria-hidden="true" />}<span className="finder-name-label" title={item.name}>{shortName(item.name)}</span></span>{view === "list" && <><span>{kindOf(item)}</span><time dateTime={timestamp(item) ? item.date : undefined}>{timestamp(item) ? new Date(item.date!).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" }) : "—"}</time></>}</button></Fragment>)}
     </div>}</div></div>
     <footer className="native-folder-footer"><Folder size={12} />{title}{group && <> › {group}</>}{opened && file && <> › {file.name}</>}<small>{visibleFiles.length} items</small></footer>
     {quick && file && <div className="folder-quick-overlay"><div ref={dialog} className="folder-quick-panel" role="dialog" aria-modal="true" aria-label={`Quick Look: ${file.name}`}><button className="folder-quick-close" aria-label="Close Quick Look" onClick={closeQuick}><X size={18} /></button><small>QUICK LOOK</small><h2>{file.name}</h2><p>{file.text?.split("\n").find(Boolean)}</p>{!file.oneLine && file.url && <a href={file.url} target="_blank" rel="noreferrer">Open original ↗</a>}</div></div>}

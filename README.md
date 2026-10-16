@@ -4,7 +4,7 @@ The personal portfolio of Nurhayat Yurtaslan, built with Next.js and the App Rou
 
 ## Current release
 
-Version **1.1.0** introduces the desktop Finder experience, Spotlight, seven themes, a responsive phone preview, animated GitHub statistics, and pet-reported browser measurements. Work contains featured projects and live public repositories in separate sections. Contact opens in a desktop window and submits through Web3Forms.
+Version **1.2.0** refines the desktop with eight distinct animated coding pets, random pet selection on page load, theme-aware terminals and folders, compact Finder filenames, and a custom commit-stream animation. The desktop Finder experience, Spotlight, seven themes, responsive phone preview, and pet-reported browser measurements remain available. Work contains featured projects and live public repositories in separate sections. Contact opens in a desktop window and submits through Web3Forms.
 
 See [CHANGELOG.md](CHANGELOG.md) for release notes. Created with Codex in collaboration with Nurhayat Yurtaslan.
 

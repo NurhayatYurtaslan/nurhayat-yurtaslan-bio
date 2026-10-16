@@ -5,7 +5,7 @@ import VectorPet, { type PetAnimal } from "./vector-pet";
 import { useSessionThoughts } from "./session-readout";
 
 type Mark = PetAnimal;
-const marks: Mark[] = ["penguin", "fox", "panda", "cat", "rabbit", "bear"];
+const marks: Mark[] = ["penguin", "fox", "panda", "cat", "rabbit", "bear", "dog", "koala"];
 
 const storageKey = "portfolio-desktop-mark-v1";
 const codingThoughts = [
@@ -17,8 +17,8 @@ const codingThoughts = [
 ];
 const bound = (x: number, y: number) => {
   const dock = document.querySelector(".desktop-dock")?.getBoundingClientRect();
-  const position = { x: Math.max(8, Math.min(window.innerWidth - 80, x)), y: Math.max(8, Math.min(window.innerHeight - 84, y)) };
-  if (dock && position.x + 72 > dock.left - 8 && position.x < dock.right + 8 && position.y + 76 > dock.top - 8 && position.y < dock.bottom + 8) position.y = Math.max(8, dock.top - 84);
+  const position = { x: Math.max(8, Math.min(window.innerWidth - 120, x)), y: Math.max(8, Math.min(window.innerHeight - 104, y)) };
+  if (dock && position.x + 112 > dock.left - 8 && position.x < dock.right + 8 && position.y + 96 > dock.top - 8 && position.y < dock.bottom + 8) position.y = Math.max(8, dock.top - 104);
   return position;
 };
 
@@ -37,8 +37,9 @@ export default function DesktopMark({ theme, windows }: { theme: string; windows
   const drag = useRef<{ x: number; y: number; initialX: number; initialY: number; moved: boolean } | null>(null);
   const initialized = useRef(false);
   useEffect(() => {
-    let saved = { mark: "penguin" as Mark, x: window.innerWidth - 76, y: window.innerHeight - 76 };
-    try { const data = JSON.parse(localStorage.getItem(storageKey) ?? "null"); if (data && marks.includes(data.mark) && Number.isFinite(data.x) && Number.isFinite(data.y)) saved = data; } catch {}
+    const randomMark = marks[Math.floor(Math.random() * marks.length)];
+    let saved = { mark: randomMark, x: window.innerWidth - 120, y: window.innerHeight - 104 };
+    try { const data = JSON.parse(localStorage.getItem(storageKey) ?? "null"); if (data && Number.isFinite(data.x) && Number.isFinite(data.y)) saved = { mark: randomMark, x: data.x, y: data.y }; } catch {}
     setValue({ mark: saved.mark, ...bound(saved.x, saved.y) });
     initialized.current = true;
     const resize = () => setValue(current => current && { mark: current.mark, ...bound(current.x, current.y) });

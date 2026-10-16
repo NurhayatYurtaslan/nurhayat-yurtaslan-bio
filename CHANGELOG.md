@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.0 — 2026-10-16
+
+- Redesigned eight coding pets with distinct silhouettes, monitors, keyboards and typing animations.
+- Randomized the pet on page load while preserving its saved position.
+- Matched terminal backgrounds, syntax colors, folder icons and selection colors to all seven themes.
+- Added a custom animated commit stream and fixed statistics-card overflow.
+- Shortened Finder labels to 32 characters and two lines, retaining full titles in previews.
+- Added a small OpenAI/Codex development credit with the Sol attribution.
+
 ## 1.1.0 — 2026-10-14
 
 - Unified featured projects and live GitHub repositories in Work.

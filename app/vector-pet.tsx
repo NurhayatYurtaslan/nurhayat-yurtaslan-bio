@@ -1,30 +1,105 @@
 import { useId } from "react";
 
-export type PetAnimal = "cat" | "rabbit" | "bear" | "penguin" | "fox" | "panda";
+export type PetAnimal = "cat" | "rabbit" | "bear" | "penguin" | "fox" | "panda" | "dog" | "koala";
+const palettes: Record<PetAnimal, { coat: string; shade: string; cream: string; accent: string }> = {
+  penguin: { coat: "#547f9e", shade: "#28485f", cream: "#fff5db", accent: "#bba0dd" },
+  fox: { coat: "#edac69", shade: "#b96e42", cream: "#fff1d6", accent: "#8cb5a4" },
+  panda: { coat: "#f2eee2", shade: "#3c4556", cream: "#fff9eb", accent: "#d5a17e" },
+  cat: { coat: "#f0c88e", shade: "#bd8b5d", cream: "#fff1d5", accent: "#8ca9ce" },
+  rabbit: { coat: "#eee3e3", shade: "#bfa6b5", cream: "#fff9ef", accent: "#b6acd6" },
+  bear: { coat: "#bc8866", shade: "#855e4c", cream: "#f8dfb4", accent: "#93b6a0" },
+  dog: { coat: "#e8d0a2", shade: "#996e54", cream: "#fff7df", accent: "#d08a84" },
+  koala: { coat: "#a9bdc4", shade: "#718795", cream: "#ecf1e5", accent: "#d4b482" },
+};
+
 export default function VectorPet({ happy = false, animal = "penguin" }: { happy?: boolean; animal?: PetAnimal }) {
   const id = useId().replace(/:/g, "");
-  return <svg className={`vector-pet ${happy ? "pet-happy" : ""}`} viewBox="0 0 96 100" fill="none" aria-hidden="true">
-    <defs><linearGradient id={`${id}-coat`} x1="22" y1="24" x2="74" y2="86" gradientUnits="userSpaceOnUse"><stop stopColor="#536b80" /><stop offset=".55" stopColor="#293e52" /><stop offset="1" stopColor="#182c3e" /></linearGradient><linearGradient id={`${id}-laptop`} x1="31" y1="70" x2="66" y2="90" gradientUnits="userSpaceOnUse"><stop stopColor="#596877" /><stop offset="1" stopColor="#273442" /></linearGradient></defs>
-    <ellipse cx="48" cy="93" rx="25" ry="3" fill="#20242b" opacity=".12" />
-    <g className="pet-body" stroke="#354454" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round">
-      {animal === "cat" && <path className="pet-tail" d="M70 78c18 1 21-19 11-23-7-3-10 4-6 7" stroke="#a2bace" strokeWidth="7" />}
-      <path d="M28 65q-4 13 2 23h35q6-13 1-23" fill="#bdd0df" />
-      {animal === "penguin" ? <><ellipse cx="48" cy="57" rx="29" ry="33" fill={`url(#${id}-coat)`} /><path d="M26 70q-12-5-9-18m53 18q12-5 9-18" stroke="#354c63" strokeWidth="7" /><path d="M26 52q0-18 13-18 6 0 9 7 3-7 9-7 13 0 13 18v14q0 14-22 14T26 66Z" fill="#f6f4eb" stroke="none" /><path d="m29 89-6 3h15m29-3 6 3H58" stroke="#efa64e" strokeWidth="4" /></> : animal === "fox" ? <><path d="m24 43-2-24 22 14h8l22-14-2 24q10 23-24 32-34-9-24-32Z" fill="#e6a16e" /><path d="m27 27 10 9-10 4m42-13-10 9 10 4" fill="#f3d1bc" stroke="none" /><path d="M22 49q13-3 26 10 13-13 26-10-4 20-26 26-22-6-26-26Z" fill="#fff3e6" stroke="none" /></> : animal === "panda" ? <><circle cx="27" cy="32" r="10" fill="#35404c" /><circle cx="69" cy="32" r="10" fill="#35404c" /><ellipse cx="48" cy="50" rx="28" ry="25" fill="#f6f5ef" /><ellipse cx="38" cy="49" rx="9" ry="11" fill="#35404c" transform="rotate(20 38 49)" /><ellipse cx="59" cy="49" rx="9" ry="11" fill="#35404c" transform="rotate(-20 59 49)" /></> : animal === "cat" ? <><path d="M24 42 23 15l20 15h12l18-15-1 27q9 10 2 22-7 12-26 12T22 64q-6-12 2-22Z" fill="#d9e5ed" /><path d="m28 24 9 9-9 4m38-13-8 9 9 4" fill="#cfb3b3" stroke="none" /></> : <>
-        {animal === "rabbit" ? <><ellipse cx="35" cy="23" rx="7" ry="20" fill="#eee5df" /><ellipse cx="61" cy="23" rx="7" ry="20" fill="#eee5df" /><path d="M35 10v20m26-20v20" stroke="#d7b5bc" strokeWidth="4" /></> : <><circle cx="27" cy="32" r="10" fill="#bc9d83" /><circle cx="69" cy="32" r="10" fill="#bc9d83" /></>}
-        <ellipse cx="48" cy="50" rx="28" ry="25" fill={animal === "rabbit" ? "#eee5df" : "#bc9d83"} />
-      </>}
-      {!["penguin", "fox", "panda"].includes(animal) && <path d="M29 51q0-12 19-12t20 12q0 13-20 13T29 51Z" fill="#fafafa" stroke="none" />}
-      <ellipse cx="32" cy="57" rx="4" ry="2.5" fill="#e9b5bd" stroke="none" opacity=".75" />
-      <ellipse cx="65" cy="57" rx="4" ry="2.5" fill="#e9b5bd" stroke="none" opacity=".75" />
-      <g className="pet-eyes"><ellipse cx="39" cy="50" rx="3.2" ry="4" fill="#303844" stroke="none" /><ellipse cx="58" cy="50" rx="3.2" ry="4" fill="#303844" stroke="none" /><circle cx="38" cy="48.5" r="1.1" fill="white" stroke="none" /><circle cx="57" cy="48.5" r="1.1" fill="white" stroke="none" /></g>
-      {animal === "penguin" ? <path d="m42 57 6 6 6-6-6-3Z" fill="#efa64e" /> : <path d={happy ? "M41 57q7 9 14 0" : "m46 56 2 1.5 2-1.5m-2 1.5q-3 6-6 2m6-2q3 6 6 2"} />}
-      {["cat", "rabbit", "fox"].includes(animal) && <path d="m22 54-9-2m10 7-9 2m59-7 9-2m-9 7 9 2" strokeWidth="1.2" />}
-      <rect x="31" y="71" width="34" height="19" rx="4" fill={`url(#${id}-laptop)`} stroke="#718393" />
-      <path d="M35 73h26" stroke="#b2c4d2" strokeOpacity=".45" />
-      <path className="pet-code" d="m38 77 3 2-3 2m8-4-2 6m6-6 3 2-3 2m-6 4h10" stroke="#b8e6dc" strokeWidth="1.3" />
-      <path d="M28 90h40l-3 2H31Z" fill="#a8b8c5" stroke="#657b8d" />
-      <ellipse className="pet-paw pet-paw-left" cx="31" cy="85" rx="5" ry="3" fill="#e6edf1" />
-      <ellipse className="pet-paw pet-paw-right" cx="65" cy="85" rx="5" ry="3" fill="#e6edf1" />
+  const p = palettes[animal];
+  return <svg className={`vector-pet studio-pet pet-${animal} ${happy ? "pet-happy" : ""}`} viewBox="0 0 160 132" fill="none" aria-hidden="true">
+    <defs>
+      <linearGradient id={`${id}-fur`} x1="20" y1="30" x2="91" y2="111" gradientUnits="userSpaceOnUse"><stop stopColor={p.coat} /><stop offset="1" stopColor={p.shade} /></linearGradient>
+      <linearGradient id={`${id}-screen`} x1="103" y1="41" x2="146" y2="90" gradientUnits="userSpaceOnUse"><stop stopColor="#344f5c" /><stop offset="1" stopColor="#1a2939" /></linearGradient>
+      <clipPath id={`${id}-clip`}><path d="m105 49 35 5-3 29-35-5Z" /></clipPath>
+    </defs>
+    <ellipse cx="83" cy="123" rx="65" ry="5" fill="#1c2831" opacity=".12" />
+    <g stroke="#364755" strokeWidth="1.2" strokeLinejoin="round" strokeLinecap="round">
+      <path d="M32 100v19m37-17v17" stroke={p.shade} strokeWidth="4" />
+      <path d="M28 100h45" stroke={p.accent} strokeWidth="7" />
+      {animal === "fox" && <path className="studio-tail" d="M34 107C1 117 5 74 30 82q-11 10 4 25Z" fill={p.coat} />}
+      {animal === "fox" && <path d="M15 85q-12 7-4 19l9-7Z" fill={p.cream} stroke="none" />}
+      {animal === "cat" && <path className="studio-tail" d="M31 106C7 113 6 93 13 90s12 1 7 7" stroke={p.shade} strokeWidth="8" />}
+      {animal === "dog" && <path className="studio-tail" d="m31 105-14-8" stroke={p.shade} strokeWidth="7" />}
+      <g className="studio-character">
+        <path d="M32 72q-9 19 0 35h39q12-16 1-35Z" fill={`url(#${id}-fur)`} />
+        <ellipse cx="59" cy="91" rx="17" ry="19" fill={p.cream} stroke="none" />
+        {animal === "penguin" ? <>
+          <path d="M23 57q-3-35 25-36 33-2 37 35l-1 17q-4 15-29 14-31 0-32-30Z" fill={`url(#${id}-fur)`} />
+          <path d="M36 58q-3-22 11-23 10-1 14 10 8-12 16-3 8 10 4 28-3 13-23 11-23-1-22-23Z" fill={p.cream} stroke="none" />
+          <path d="m76 60 14 5-13 6" fill="#e9b253" />
+          <path d="m44 24 8-7 5 7" fill={p.coat} />
+        </> : animal === "fox" ? <>
+          <path d="m24 47 0-28 24 15 15-2 18-18 1 35q11 11 1 26-8 12-33 8-26-4-26-36Z" fill={p.coat} />
+          <path d="m29 28 12 10-11 4m43-18-9 14 11-2" fill="#d88774" stroke="none" />
+          <path d="M25 56q13 0 31 13l29-13q1 25-29 25T25 56Z" fill={p.cream} stroke="none" />
+          <path d="m77 64 12 2-10 6" fill={p.shade} />
+        </> : animal === "panda" ? <>
+          <circle cx="31" cy="32" r="12" fill={p.shade} /><circle cx="76" cy="33" r="11" fill={p.shade} />
+          <ellipse cx="55" cy="56" rx="30" ry="28" fill={p.coat} />
+          <ellipse cx="49" cy="54" rx="10" ry="13" fill={p.shade} transform="rotate(17 49 54)" />
+          <ellipse cx="74" cy="54" rx="7" ry="10" fill={p.shade} />
+          <ellipse cx="69" cy="70" rx="13" ry="8" fill={p.cream} stroke="none" />
+        </> : animal === "cat" ? <>
+          <path d="m25 48 1-28 23 15h15l17-16 1 31q9 18-4 28-14 12-36 3-23-8-17-33Z" fill={p.coat} />
+          <path d="m31 29 10 10-11 1m45-12-8 11 10-1" fill="#d89890" stroke="none" />
+          <path d="m48 35 3 9m8-9 2 8M28 53l10 3m-9 7 9-1" stroke={p.shade} strokeWidth="3" />
+          <ellipse cx="69" cy="70" rx="14" ry="9" fill={p.cream} stroke="none" />
+        </> : animal === "rabbit" ? <>
+          <path d="M38 40C13 2 34-9 47 36M58 35C55-3 80-2 70 39" fill={p.coat} strokeWidth="2" />
+          <path d="M38 14 44 32m23-19-3 18" stroke="#dca9b6" strokeWidth="5" />
+          <ellipse cx="55" cy="58" rx="29" ry="25" fill={p.coat} /><ellipse cx="72" cy="70" rx="14" ry="9" fill={p.cream} stroke="none" />
+        </> : animal === "bear" ? <>
+          <circle cx="30" cy="33" r="11" fill={p.coat} /><circle cx="76" cy="34" r="10" fill={p.coat} />
+          <circle cx="30" cy="33" r="5" fill={p.cream} stroke="none" /><circle cx="76" cy="34" r="4" fill={p.cream} stroke="none" />
+          <ellipse cx="54" cy="57" rx="31" ry="28" fill={p.coat} /><ellipse cx="68" cy="69" rx="16" ry="12" fill={p.cream} stroke="none" />
+        </> : animal === "dog" ? <>
+          <ellipse cx="55" cy="54" rx="29" ry="27" fill={p.coat} />
+          <path d="M33 33q-22-5-16 32 2 16 13 12 9-4 3-44Z" fill={p.shade} />
+          <path d="M52 29h10l5 31H51Z" fill={p.cream} stroke="none" />
+          <ellipse cx="77" cy="67" rx="15" ry="12" fill={p.cream} /><ellipse cx="85" cy="63" rx="5" ry="4" fill={p.shade} />
+        </> : <>
+          <circle cx="27" cy="40" r="17" fill={p.coat} /><circle cx="79" cy="38" r="14" fill={p.coat} />
+          <circle cx="27" cy="40" r="11" fill="#e8d8df" stroke="none" /><circle cx="79" cy="38" r="8" fill="#e8d8df" stroke="none" />
+          <ellipse cx="55" cy="59" rx="29" ry="26" fill={p.coat} /><ellipse cx="75" cy="63" rx="7" ry="10" fill="#36424a" />
+          <path d="m42 33 5-4 4 4 4-5 5 5" fill={p.coat} />
+        </>}
+        <ellipse cx="41" cy="67" rx="5" ry="3" fill="#e6a4ad" opacity=".6" stroke="none" />
+        <g className="studio-eyes">
+          <ellipse cx="52" cy="54" rx="3.6" ry={happy ? 3 : 5} fill="#273744" stroke="none" />
+          <ellipse cx="74" cy="54" rx="2.6" ry={happy ? 2.8 : 4.2} fill="#273744" stroke="none" />
+          <circle cx="53" cy="52" r="1.4" fill="#fff" stroke="none" /><circle cx="75" cy="52" r="1" fill="#fff" stroke="none" />
+        </g>
+        {!["penguin", "koala", "dog"].includes(animal) && <path d="m68 64 5 1-3 3m0 0q-1 7-6 4" stroke={p.shade} />}
+        {animal === "dog" && <path d="M81 72q-2 5-7 2" />}
+        <path d="M30 83q12 8 23-1l7 6q-15 12-30 2Z" fill={p.accent} stroke="none" />
+        {animal === "penguin" && <path d="m40 85-4 12 9-1 1-9" fill={p.accent} stroke="none" />}
+      </g>
+      <path d="M30 113h119" stroke="#879291" strokeWidth="3" />
+      <path d="M40 115v9m101-9v9" stroke="#879291" strokeWidth="2" />
+      <path d="m101 42 45 6-4 43-45-6Z" fill="#697a84" />
+      <path d="m105 49 35 5-3 29-35-5Z" fill={`url(#${id}-screen)`} stroke="none" />
+      <g clipPath={`url(#${id}-clip)`} strokeWidth="2">
+        <g className="studio-code-lines">
+          <path d="m108 55 7 1m-7 5 13 2m-9 4 18 3m-23 2 9 2m-9 4 20 3" stroke="#9bd4bb" />
+          <path d="m119 57 13 2m-7 5 10 1m-15 10 13 2" stroke="#c1a6de" />
+          <path d="m108 85 12 2m-12 4 21 3" stroke="#9bd4bb" />
+        </g>
+      </g>
+      <circle cx="140" cy="87" r="1.2" fill="#b2dbc6" stroke="none" />
+      <path d="m117 89-2 12 14 2m-22 0 28 4" stroke="#879ba6" strokeWidth="3" />
+      <path d="m62 99 38 4 7 7-44-4Z" fill="#aabac4" />
+      <g stroke="#526a78" strokeWidth="1"><path d="m68 101 28 3m-27 0 28 3m-23-6 1 3m5-2 1 3m5-2 1 3m5-2 1 3" /></g>
+      <g className="studio-paw studio-paw-back"><path d="M65 84q10 3 18 14" stroke={p.shade} strokeWidth="8" /><ellipse cx="84" cy="99" rx="7" ry="4" fill={p.cream} /></g>
+      <g className="studio-paw studio-paw-front"><path d="M55 89q4 8 13 11" stroke={p.coat} strokeWidth="9" /><ellipse cx="71" cy="102" rx="7" ry="4" fill={p.cream} /></g>
     </g>
   </svg>;
 }
